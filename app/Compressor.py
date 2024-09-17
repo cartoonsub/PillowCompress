@@ -17,7 +17,11 @@ class Compressor():
                 fileSize = os.path.getsize(file) / (1024 * 1024)
                 # print('Compressing:', fileName, 'size:', fileSize)
                 
-                newFile = os.path.join(self.dest, fileName)
+                if self.dest:
+                    newFile = os.path.join(self.dest, fileName)
+                else:
+                    newFile = file
+
                 Img.save(newFile, optimize=True, quality=self.quality)
 
                 newFileSize = os.path.getsize(newFile) / (1024 * 1024)

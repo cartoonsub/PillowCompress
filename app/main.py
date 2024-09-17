@@ -3,13 +3,14 @@ import Compressor
 
 
 def main():
-    FM = fileManager.FileManager('C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/volgograd')
+    folder = 'C:/Users/tseri/OneDrive/Изображения/3d'
+    FM = fileManager.FileManager(folder)
     files = FM.getFiles()
     if not files:
         print('Error: files is empty')
         return
     
-    newFolder = 'C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/volgograd/compressed'
+    newFolder = ''
     FM.createDirectory(newFolder)
     CM = Compressor.Compressor(files, 90, newFolder)
     CM.compressFiles()

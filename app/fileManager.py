@@ -2,6 +2,7 @@ import re
 import os
 import sys
 import shutil
+import pprint as pp
 
 class FileManager():
     def __init__(self, folder: str, dest: str = ''):
@@ -26,9 +27,14 @@ class FileManager():
                 currentFile = os.path.join(root, file)
                 filesList.append(currentFile)
 
+        pp.pprint(filesList)
         return filesList
 
     def createDirectory(self, folder: str):
+        if not folder:
+            print('Error: folder name is empty')
+            return
+
         if not os.path.exists(folder):
             os.makedirs(folder)
         
