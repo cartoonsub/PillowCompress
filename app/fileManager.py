@@ -1,10 +1,11 @@
-import re
 import os
-import sys
+import re
 import shutil
+import sys
 import pprint as pp
 
-class FileManager():
+
+class FileManager:
     def __init__(self, folder: str, dest: str = ''):
         self.folder = folder
         self.dest = dest
@@ -12,43 +13,34 @@ class FileManager():
         if not self.dest:
             self.dest = self.folder
 
-    def getFiles(self) -> list:
-        filesList = []
-        if (os.path.isdir(self.folder) == False):
-            print('Error: folder is not exist')
-            return filesList
-        
+    def get_files(self) -> list:
+        files_list = []
+        if not os.path.isdir(self.folder):
+            print('Error: folder does not exist')
+            return files_list
+
         os.chdir(self.folder)
-        curentDir = os.getcwd()
-        for root, dirs, files in os.walk(curentDir):
+        current_dir = os.getcwd()
+        for root, dirs, files in os.walk(current_dir):
             if not files:
                 continue
             for file in files:
-                currentFile = os.path.join(root, file)
-                filesList.append(currentFile)
+                current_file = os.path.join(root, file)
+                files_list.append(current_file)
 
-        pp.pprint(filesList)
-        return filesList
+        pp.pprint(files_list)
+        return files_list
 
-    def createDirectory(self, folder: str):
+    def create_directory(self, folder: str):
         if not folder:
             print('Error: folder name is empty')
             return
-
         if not os.path.exists(folder):
             os.makedirs(folder)
-        
-        return folder
+            print(f'Directory {folder} created')
+        else:
+            print(f'Directory {folder} already exists')
 
-    def Rename(self, file):
-        pass
-        # newFile = os.path.join(self.folder, newName)
-        # self.names.append(matches['serie'])
-        # print('Renamed:', file, 'to', newFile, end='\n\r \n\r')
-        # if self.test == True:
-        #     return
-
-        # shutil.move(file, newFile)
 
 if __name__ == '__main__':
     pass
