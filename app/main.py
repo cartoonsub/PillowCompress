@@ -5,7 +5,6 @@ import pprint as pp
 
 class Compressor:
     def __init__(self, params: dict) -> None:
-        #  folder : str, new_folder : str = '', skip_folders : list = [], quality : int = 90
         if not params:
             raise ValueError('Error: params is empty')
         
@@ -28,23 +27,26 @@ class Compressor:
         if self.new_folder:
             fm.create_directory(self.new_folder)
 
-        cm = ImageCompressor.Compressor(files, self.quality, self.new_folder)
-        cm.compress_files()
-
+        if 'image' in files:
+            cm = ImageCompressor.Compressor(files['image'], self.quality, self.new_folder, self.max_sizes)
+            cm.compress_files()
+        
+        if 'video' in files:
+            pass
 
 def main():
     params = {
-        'folder': 'C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/asia/DONE/острова PhiPhi/noneed',
-        
+        # 'folder': 'C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/asia/DONE/острова PhiPhi/noneed',
+        'folder': 'C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/asia/мыс промтеп',
         'skip_folders': [
             r'done',
         ],
         'quality': 90,
-        # 'new_folder': 'C:/Users/tseri/OneDrive/Documents/temp',
-        # 'max_sizes': {
-        #     'width': 1920,
-        #     'height': 1080
-        # }
+        'new_folder': 'C:/Users/tseri/OneDrive/Documents/temp',
+        'max_sizes': {
+            'width': 1920,
+            'height': 1080
+        }
     }
 
     Compressor(params).run()

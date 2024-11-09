@@ -3,10 +3,16 @@ import os
 
 
 class Compressor:
-    def __init__(self, files: list, quality: int = 100, dest: str = '', max_sizes: dict = {}) -> None:
+    def __init__(
+            self, files: list,
+            quality: int = 100,
+            dest: str = '',
+            max_sizes: dict = {}
+    ) -> None:
         self.files = files
         self.quality = quality
         self.dest = dest
+        self.max_sizes = max_sizes
 
     def compress_files(self):
         for file in self.files:
@@ -69,6 +75,7 @@ class Compressor:
             new_width, new_height = new_height, new_width
 
         return new_width, new_height
+
 
 if __name__ == '__main__':
     pass

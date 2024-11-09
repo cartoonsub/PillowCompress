@@ -4,7 +4,7 @@ import shutil
 import sys
 import pprint as pp
 import re
-
+import mimetypes
 
 class FileManager:
     def __init__(self, folder: str, dest: str = '', skip_folders: list = []):
@@ -15,8 +15,20 @@ class FileManager:
         if not self.dest:
             self.dest = self.folder
 
-    def get_files(self) -> list:
-        files_list = []
+        self.image_types = [
+            'image/jpeg',
+            'image/png',
+            'image/webp',
+        ]
+
+        self.video_types = [
+            'video/mp4',
+            'video/quicktime',
+            'video/mpeg',
+        ]
+
+    def get_files(self) -> dict:
+        files_list = {}
         if not os.path.isdir(self.folder):
             print('Error: folder does not exist')
             return files_list
@@ -32,7 +44,11 @@ class FileManager:
                 continue
             for file in files:
                 current_file = os.path.join(root, file)
-                files_list.append(current_file)
+                file_type = self.get_file_type(current_file)
+                if file_type in files_list:
+                    files_list[file_type].append(current_file)
+                else:
+                    files_list[file_type] = [current_file]
 
         return files_list
     
@@ -46,6 +62,20 @@ class FileManager:
                 break
                 
         return result
+
+    def get_file_type(self, file: str) -> str:
+        if not os.path.isfile(file):
+            return ''
+
+        mime_type, encoding = mimetypes.guess_type(file)
+        if mime_type in self.image_types:
+            file_type = 'image'
+        elif mime_type in self.video_types:
+            file_type = 'video'
+        else:
+            file_type = 'other'
+
+        return file_type
 
     def create_directory(self, folder: str):
         if not folder:
