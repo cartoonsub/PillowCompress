@@ -1,6 +1,5 @@
 import fileManager
-import Compressor as ImageCompressor
-import pprint as pp
+import ImageCompressor
 
 
 class Compressor:
@@ -34,9 +33,9 @@ class Compressor:
         if 'video' in files:
             pass
 
+
 def main():
     params = {
-        # 'folder': 'C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/asia/DONE/острова PhiPhi/noneed',
         'folder': 'C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/asia/мыс промтеп',
         'skip_folders': [
             r'done',

@@ -1,8 +1,5 @@
 import os
 import re
-import shutil
-import sys
-import pprint as pp
 import re
 import mimetypes
 

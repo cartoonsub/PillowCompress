@@ -2,7 +2,7 @@ from PIL import Image
 import os
 
 
-class Compressor:
+class ImageCompressor:
     def __init__(
             self, files: list,
             quality: int = 100,
