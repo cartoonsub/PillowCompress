@@ -1,4 +1,6 @@
 import os
+import subprocess
+import json
 
 
 class VideoCompressor:
@@ -13,6 +15,9 @@ class VideoCompressor:
         self.dest = dest
         self.bitrateAudio = bitrateAudio
         self.bitrateVideo = bitrateVideo
+
+    def run(self) -> None:
+        self.filter_files()
 
     def compress_files(self):
         for file in self.files:
@@ -43,6 +48,29 @@ class VideoCompressor:
             except Exception as e:
                 print(f'Error: {e}')
                 continue
+
+    def filter_files(self) -> None:
+        for file in self.files:
+            file = str(file)
+            if not file.lower().endswith(self.extensions):
+                continue
+            
+            info = self.get_video_info(file)
+            print('Compress:', file)
+            # print('info:', info)
+
+    def get_video_info(self, file: str) -> dict:
+        cmd = 'ffprobe'
+        args = [cmd, '-show_format', '-show_streams', '-of', 'json', file]
+
+        print('args:', args)
+        p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = p.communicate()
+        if p.returncode != 0:
+            raise Exception(f'Error running ffprobe on {file}: {err.decode("utf-8")}')
+
+        # print(out.decode('utf-8'))
+        return json.loads(out.decode('utf-8'))
 
     def get_new_size(self, width: int, height: int) -> tuple:
         max_width = self.max_sizes.get('width', 1920)
