@@ -1,5 +1,6 @@
 import fileManager
 import ImageCompressor
+import VideoCompressor
 
 
 class Compressor:
@@ -14,7 +15,9 @@ class Compressor:
         self.quality = params.get('quality', 90)
         self.new_folder = params.get('new_folder', '')
         self.skip_folders = params.get('skip_folders', [])
-        self.max_sizes = params.get('max_sizes', {})
+        self.max_sizes_image = params.get('max_sizes_image', {})
+        self.bitrateVideo = params.get('bitrateVideo', '') #5000k
+        self.bitrateAudio = params.get('bitrateAudio', '') #192k
 
     def run(self) -> None:
         fm = fileManager.FileManager(self.folder, skip_folders=self.skip_folders)
@@ -27,11 +30,12 @@ class Compressor:
             fm.create_directory(self.new_folder)
 
         if 'image' in files:
-            cm = ImageCompressor.Compressor(files['image'], self.quality, self.new_folder, self.max_sizes)
-            cm.compress_files()
+            imgComp = ImageCompressor.Compressor(files['image'], self.quality, self.new_folder, self.max_sizes_image)
+            imgComp.compress_files()
         
         if 'video' in files:
-            pass
+            videoComp = VideoCompressor.Compressor(files['video'], self.new_folder, self.bitrateAudio, self.bitrateVideo)
+            videoComp.compress_files()
 
 
 def main():
@@ -42,7 +46,7 @@ def main():
         ],
         'quality': 90,
         'new_folder': 'C:/Users/tseri/OneDrive/Documents/temp',
-        'max_sizes': {
+        'max_sizes_image': {
             'width': 1920,
             'height': 1080
         }
