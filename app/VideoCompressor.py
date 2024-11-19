@@ -8,7 +8,7 @@ class VideoCompressor:
             self, files: list,
             dest: str = '',
             bitrateAudio: str = '',
-            bitrateVideo: str = '',
+            bitrateVideo: int = '',
             max_sizes: dict = {}
     ) -> None:
         self.ffmpeg = 'C:/ffmpeg/bin/ffmpeg.exe'
@@ -69,6 +69,8 @@ class VideoCompressor:
 
     def compress_files(self):
         for file in self.files:
+            print('Compressing:', file)
+
             info = self.get_video_info(file)
             bitrate = self.get_video_bitrate(info)
             bitrate = str(bitrate) + 'k'
@@ -87,36 +89,42 @@ class VideoCompressor:
 
             codec = 'libx264'
             query = startQuery + ' -c:v ' + codec + ' -b:v ' + bitrate + ' -pass 1 -f mp4 NULL' # NULL
-            print(query)
-            process = subprocess.Popen(query, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            while True:
-                output = process.stdout.readline()
-                if output == b'' and process.poll() is not None:
-                    break
-                if output:
-                    print(output.decode().strip())
+            process = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = process.communicate()
+            if process.returncode != 0:
+                print(f'Error during first pass: {stderr.decode()}')
+                return
 
-            print('Pass 2')
-            print('-' * 50)
-
-            
+            if not os.path.exists('NULL'):
+                self.remove_garbage()
+                print('Error: NULL file is not created')
+                return
 
             outName = '"' + new_file + '"'
             query = ''
             query = startQuery + ' -map 0:0'
-            # надо битрейт аудио поставть -c:a aac -b:a 192k 
             query = startQuery + ' -c:v libx264 -b:v ' + bitrate + ' -pass 2 -c:a aac -b:a ' + bitrate_audio + ' -f mp4 -movflags +faststart ' + outName
 
-            # process = subprocess.Popen(query, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            # process.communicate()
-            print(query)
-            # new_file_size = os.path.getsize(new_file) / (1024 * 1024)
-            # print(f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB')
+            process = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = process.communicate()
+            if process.returncode != 0:
+                print(f'Error during first pass: {stderr.decode()}')
+                return
+            
+            if not os.path.exists(new_file):
+                print('Error: compressed file is not created')
+                self.remove_garbage()
+                return
+            
+            new_file_size = os.path.getsize(new_file) / (1024 * 1024)
+            print(f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB')
+
+            self.remove_garbage()
 
     def get_video_bitrate(self, info: dict) -> int:
         bitrate = 0
         if not info:
-            return bitrate
+            return self.bitrateVideo
 
         streams = info.get('streams', [])
         for stream in streams:
@@ -124,6 +132,9 @@ class VideoCompressor:
                 bitrate = int(stream.get('bit_rate', 0))
                 bitrate = int(bitrate / 1000)
                 break
+
+        if self.bitrateVideo < bitrate:
+            bitrate = self.bitrateVideo
 
         return bitrate
 
@@ -173,6 +184,18 @@ class VideoCompressor:
             new_width, new_height = new_height, new_width
 
         return new_width, new_height
+
+    def remove_garbage(self):
+        if os.path.exists('NULL'):
+            os.remove('NULL')
+        
+        files = os.listdir('.')
+        for file in files:
+            if file.endswith('.log'):
+                os.remove(file)
+            
+            if file.endswith('.mbtree'):
+                os.remove(file)
 
 
 if __name__ == '__main__':

@@ -47,12 +47,12 @@ def main():
             r'done',
         ],
         'quality': 90,
-        'new_folder': 'C:/Users/tseri/OneDrive/Documents/temp',
+        # 'new_folder': 'C:/Users/tseri/Videos/test_done',
         'max_sizes_image': {
             'width': 1920,
             'height': 1080
         },
-        # 'max_bitrate_video': '5000k',
+        'max_bitrate_video': 5000,
         # 'max_bitrate_audio': '192k',
         # 'max_sizes_video': {
         #     'width': 1920,
