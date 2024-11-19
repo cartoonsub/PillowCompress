@@ -8,69 +8,139 @@ class VideoCompressor:
             self, files: list,
             dest: str = '',
             bitrateAudio: str = '',
-            bitrateVideo: str = ''
+            bitrateVideo: str = '',
+            max_sizes: dict = {}
     ) -> None:
+        self.ffmpeg = 'C:/ffmpeg/bin/ffmpeg.exe'
         self.extensions = ('mp4', 'mkv', 'avi', 'flv', 'mov', 'wmv', 'mpg', 'mpeg', 'm4v', '3gp', '3g2', 'm2ts', 'mts', 'ts', 'webm')
+        self
         self.files = files
         self.dest = dest
         self.bitrateAudio = bitrateAudio
         self.bitrateVideo = bitrateVideo
+        self.max_sizes = max_sizes
 
     def run(self) -> None:
         self.filter_files()
-
-    def compress_files(self):
-        for file in self.files:
-            try:
-                img = Image.open(file)
-                
-                if self.max_sizes:
-                    width, height = img.size
-                    if not width or not height:
-                        print(f'Error: size is empty {file}')
-                        continue
-
-                    newWidth, newHeight = self.get_new_size(width, height)
-                    img = img.resize((newWidth, newHeight))
-
-                file_name = os.path.basename(file)
-                file_size = os.path.getsize(file) / (1024 * 1024)
-
-                if self.dest:
-                    new_file = os.path.join(self.dest, file_name)
-                else:
-                    new_file = file
-
-                img.save(new_file, optimize=True, quality=self.quality)
-
-                new_file_size = os.path.getsize(new_file) / (1024 * 1024)
-                print(f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB')
-            except Exception as e:
-                print(f'Error: {e}')
-                continue
+        if not self.files:
+            print('After filtering: files is empty')
+            return
+        self.compress_files()
 
     def filter_files(self) -> None:
-        for file in self.files:
+        for index, file in enumerate(self.files):
             file = str(file)
             if not file.lower().endswith(self.extensions):
                 continue
             
             info = self.get_video_info(file)
-            print('Compress:', file)
-            # print('info:', info)
+            if not info:
+                print('Error: info is empty')
+                continue
+
+            format = info.get('format', {})
+            if not format:
+                print('Error: format is empty')
+                continue
+
+            flag = False
+            format_name = format.get('format_name', '')
+            formats = format_name.split(',')
+            for format in formats:
+                if format in self.extensions:
+                    flag = True
+                    break
+            
+            if not flag:
+                print('Error: format is not supported', file)
+                self.files.pop(index)
 
     def get_video_info(self, file: str) -> dict:
         cmd = 'ffprobe'
         args = [cmd, '-show_format', '-show_streams', '-of', 'json', file]
 
-        print('args:', args)
-        p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        out, err = p.communicate()
-        if p.returncode != 0:
+        popen = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        out, err = popen.communicate()
+        if popen.returncode != 0:
             raise Exception(f'Error running ffprobe on {file}: {err.decode("utf-8")}')
 
-        # print(out.decode('utf-8'))
         return json.loads(out.decode('utf-8'))
+
+
+    def compress_files(self):
+        for file in self.files:
+            info = self.get_video_info(file)
+            bitrate = self.get_video_bitrate(info)
+            bitrate = str(bitrate) + 'k'
+
+            bitrate_audio = self.get_audio_bitrate(info)
+            bitrate_audio = str(bitrate_audio) + 'k'
+            file_name = os.path.basename(file)
+            file_size = os.path.getsize(file) / (1024 * 1024)
+            if self.dest:
+                new_file = os.path.join(self.dest, file_name)
+            else:
+                new_file = file + '_compressed.mp4'
+
+            path = '"' + file + '"'
+            startQuery = self.ffmpeg + ' -y -i ' + path
+
+            codec = 'libx264'
+            query = startQuery + ' -c:v ' + codec + ' -b:v ' + bitrate + ' -pass 1 -f mp4 NULL' # NULL
+            print(query)
+            process = subprocess.Popen(query, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            while True:
+                output = process.stdout.readline()
+                if output == b'' and process.poll() is not None:
+                    break
+                if output:
+                    print(output.decode().strip())
+
+            print('Pass 2')
+            print('-' * 50)
+
+            
+
+            outName = '"' + new_file + '"'
+            query = ''
+            query = startQuery + ' -map 0:0'
+            # надо битрейт аудио поставть -c:a aac -b:a 192k 
+            query = startQuery + ' -c:v libx264 -b:v ' + bitrate + ' -pass 2 -c:a aac -b:a ' + bitrate_audio + ' -f mp4 -movflags +faststart ' + outName
+
+            # process = subprocess.Popen(query, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            # process.communicate()
+            print(query)
+            # new_file_size = os.path.getsize(new_file) / (1024 * 1024)
+            # print(f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB')
+
+    def get_video_bitrate(self, info: dict) -> int:
+        bitrate = 0
+        if not info:
+            return bitrate
+
+        streams = info.get('streams', [])
+        for stream in streams:
+            if stream.get('codec_type', '') == 'video':
+                bitrate = int(stream.get('bit_rate', 0))
+                bitrate = int(bitrate / 1000)
+                break
+
+        return bitrate
+
+    def get_audio_bitrate(self, info: dict) -> int:
+        bitrate = 0
+        if not info:
+            return bitrate
+
+        # может быть несколько аудиодорожек
+        streams = info.get('streams', [])
+        for stream in streams:
+            if stream.get('codec_type', '') == 'audio':
+                bitrate = int(stream.get('bit_rate', 0))
+                bitrate = int(bitrate / 1000)
+                break
+
+        return bitrate
 
     def get_new_size(self, width: int, height: int) -> tuple:
         max_width = self.max_sizes.get('width', 1920)

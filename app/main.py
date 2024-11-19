@@ -18,6 +18,7 @@ class Compressor:
         self.max_sizes_image = params.get('max_sizes_image', {})
         self.bitrateVideo = params.get('max_bitrate_video', '') #5000k
         self.bitrateAudio = params.get('max_bitrate_audio', '') #192k
+        self.max_sizes_video = params.get('max_sizes_video', {})
 
     def run(self) -> None:
         fm = fileManager.FileManager(self.folder, skip_folders=self.skip_folders)
@@ -34,7 +35,7 @@ class Compressor:
             imgComp.compress_files()
         
         if 'video' in files:
-            videoComp = VideoCompressor.VideoCompressor(files['video'], self.new_folder, self.bitrateAudio, self.bitrateVideo)
+            videoComp = VideoCompressor.VideoCompressor(files['video'], self.new_folder, self.bitrateAudio, self.bitrateVideo, self.max_sizes_video)
             videoComp.run()
 
 
@@ -53,6 +54,10 @@ def main():
         },
         # 'max_bitrate_video': '5000k',
         # 'max_bitrate_audio': '192k',
+        # 'max_sizes_video': {
+        #     'width': 1920,
+        #     'height': 1080
+        # }
     }
 
     Compressor(params).run()
