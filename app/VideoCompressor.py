@@ -82,7 +82,7 @@ class VideoCompressor:
             if self.dest:
                 new_file = os.path.join(self.dest, file_name)
             else:
-                new_file = file + '_compressed.mp4'
+                new_file = file
 
             path = '"' + file + '"'
             startQuery = self.ffmpeg + ' -y -i ' + path
