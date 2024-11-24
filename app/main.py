@@ -41,13 +41,13 @@ class Compressor:
 
 def main():
     params = {
-        # 'folder': 'C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/asia/мыс промтеп',
-        'folder': 'C:/Users/tseri/Videos/test',
+        'folder': 'C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/asia/пхукет байдарка',
+        # 'folder': 'C:/Users/tseri/Videos/test',
         'skip_folders': [
             r'done',
         ],
         'quality': 90,
-        # 'new_folder': 'C:/Users/tseri/Videos/test_done',
+        'new_folder': 'C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/asia/пхукет байдарка/converted',
         'max_sizes_image': {
             'width': 1920,
             'height': 1080

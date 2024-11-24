@@ -197,6 +197,9 @@ class VideoCompressor:
             if file.endswith('.mbtree'):
                 os.remove(file)
 
+            if file.endswith('.temp'):
+                os.remove(file)
+
 
 if __name__ == '__main__':
     pass
