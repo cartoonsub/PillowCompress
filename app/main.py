@@ -1,6 +1,8 @@
 import fileManager
 import ImageCompressor
 import VideoCompressor
+import PIL
+import PySide6
 
 
 class Compressor:
