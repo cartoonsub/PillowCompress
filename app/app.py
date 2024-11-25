@@ -1,40 +1,66 @@
-from PySide6 import QtWidgets  # Импорт модуля QtWidgets из библиотеки PySide6
-import sys  # Импорт модуля sys для работы с системными параметрами и выходом из программы
+import sys
+import random
+from PySide6 import QtCore, QtWidgets, QtGui
+import sys
+from PySide6.QtWidgets import (
+    QApplication, 
+    QWidget, 
+    QFileDialog, 
+    QGridLayout,
+    QPushButton, 
+    QLabel,
+    QListWidget,
+    QLineEdit
+)
+from pathlib import Path
 
-# Создание экземпляра QApplication, который управляет основным циклом событий и инициализацией приложения
-app = QtWidgets.QApplication(sys.argv)
+class MyWidget(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
 
-# Создание главного окна приложения
-window = QtWidgets.QWidget()
+        self.hello = ["Hallo Welt", "Hei maailma", "Hola Mundo", "Привет мир"]
 
-# Установка заголовка главного окна
-window.setWindowTitle("PySide6 Application")
+        self.button = QtWidgets.QPushButton("Click me!")
+        self.text = QtWidgets.QLabel("Hello World",
+                                     alignment=QtCore.Qt.AlignCenter)
 
-# Установка размеров главного окна
-window.resize(300, 250)
+        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout.addWidget(self.text)
+        self.layout.addWidget(self.button)
 
-# Создание метки (надписи) с текстом "Hello World!"
-lbl = QtWidgets.QLabel("Hello World!")
+        self.button.clicked.connect(self.magic)
 
-# Создание кнопки с надписью "Close"
-btn = QtWidgets.QPushButton("Close")
+         # file selection
+        file_browse = QPushButton('Browse')
+        file_browse.clicked.connect(self.open_file_dialog)
+        self.filename_edit = QLineEdit()
 
-# Создание вертикального блока для размещения метки и кнопки
-# Вертикальный блок из себя представляет контейнер в который мы помещаем элементы
-box = QtWidgets.QVBoxLayout()
+        self.layout.addWidget(QLabel('File:'))
+        self.layout.addWidget(self.filename_edit)
+        self.layout.addWidget(file_browse)
 
-# Добавление метки и кнопки в вертикальный блок
-box.addWidget(lbl)
-box.addWidget(btn)
+    def open_file_dialog(self):
+        filename, ok = QFileDialog.getOpenFileName(
+            self,
+            "Select a File", 
+            "D:\\icons\\avatar\\", 
+            "Images (*.png *.jpg)"
+        )
+        if filename:
+            path = Path(filename)
+            self.filename_edit.setText(str(path))
 
-# Установка вертикального блока в качестве компоновщика главного окна
-window.setLayout(box)
+    @QtCore.Slot()
+    def magic(self):
+        self.text.setText(random.choice(self.hello))
+        
 
-# Подключение обработчика события "clicked" кнопки к методу app.quit, вызывающему завершение приложения
-btn.clicked.connect(app.quit)
 
-# Отображение главного окна
-window.show()
+if __name__ == "__main__":
+    app = QtWidgets.QApplication([])
 
-# Запуск основного цикла обработки событий приложения
-sys.exit(app.exec())  # После завершения цикла приложение выходит из программ
+    widget = MyWidget()
+    widget.resize(800, 600)
+    widget.show()
+
+    sys.exit(app.exec())
