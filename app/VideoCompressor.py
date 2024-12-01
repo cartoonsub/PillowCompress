@@ -103,7 +103,7 @@ class VideoCompressor:
             outName = '"' + new_file + '"'
             query = ''
             query = startQuery + ' -map 0:0'
-            query = startQuery + ' -c:v libx264 -b:v ' + bitrate + ' -pass 2 -c:a aac -b:a ' + bitrate_audio + ' -f mp4 -movflags +faststart ' + outName
+            query = startQuery + ' -c:v libx264 -b:v ' + bitrate + ' -pass 2 -c:a aac -b:a ' + bitrate_audio + ' -f mp4 -movflags +faststart -vsync 1 -async 1 ' + outName
 
             process = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = process.communicate()
