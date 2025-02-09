@@ -2,6 +2,8 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
+from input_frame import InputFrame
+
 import re
 import os
 
@@ -52,30 +54,6 @@ center_window(root)
 root.resizable(False, False)
 root.iconbitmap(default="app/tkinter/favicon.ico")
 
-input_frame = create_frame("Input")
-input_frame.pack(anchor=NW, fill=BOTH, padx=10, pady=10, expand=True)
-
-name_label = ttk.Label(input_frame, text="Folder:")
-name_label.pack(anchor=NW)
-
-check = (root.register(is_valid_folder), "%P")
-errmsg = StringVar()
-folder_entry_var = StringVar()
-
-folder_entry = ttk.Entry(master=input_frame, validate="all",
-                         validatecommand=check, textvariable=folder_entry_var)
-folder_entry.place(anchor=NW, relwidth=0.75)
-folder_entry_var.trace_add("write", lambda name, index,
-                           mode: is_valid_folder(folder_entry_var.get()))
-
-error_label = ttk.Label(
-    foreground="red", textvariable=errmsg, master=input_frame)
-error_label.pack(padx=5, pady=5, anchor=NW, fill=X)
-
-
-folder_button = ttk.Button(master=input_frame, text="Choose folder", padding=[
-                           8, 2], command=choose_folder)
-folder_button.place(anchor=NW, relx=1-0.25)
-
+input_frame = input_frame = InputFrame(root)
 
 root.mainloop()
