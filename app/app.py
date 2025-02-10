@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import filedialog
 
 from input_frame import InputFrame
+from SettingsFrame import SettingsFrame
 
 import re
 import os
@@ -37,7 +38,7 @@ for r in range(3):
     root.rowconfigure(index=r, weight=1)
 
 input_frame = InputFrame(root, borderwidth=1, relief="solid", padding=[8, 12])
-
+settings_frame = SettingsFrame(root, borderwidth=1, relief="solid", padding=[8, 12])
 
 
 root.mainloop()
