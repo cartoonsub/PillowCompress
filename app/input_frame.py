@@ -72,17 +72,17 @@ class InputFrame(ttk.Frame):
         self.grid_columnconfigure(4, weight=0)
 
         self.skip_folders_listbox = Listbox(self, listvariable=self.skip_folders, height=5, yscrollcommand=True)
-        self.skip_folders_listbox.grid(row=3, column=0, sticky="nwe", columnspan=4, rowspan=2)
+        self.skip_folders_listbox.grid(row=3, column=0, sticky="nwes", columnspan=4, rowspan=2)
 
         self.skip_folders_entry = ttk.Entry(self)
-        self.skip_folders_entry.grid(row=3, column=4, sticky="nwe", rowspan=1, columnspan=2)
+        self.skip_folders_entry.grid(row=3, column=4, sticky="nwes", rowspan=1, columnspan=2)
 
         skip_add_button = ttk.Button(self, text="Add folder", padding=[8, 2], command=self.add_skip_folder)
-        skip_add_button.grid(row=4, column=4, columnspan=2, sticky="new", rowspan=1)
+        skip_add_button.grid(row=4, column=4, sticky="nwes", rowspan=1, columnspan=2)
 
         skip_delete_button = ttk.Button(self, text="Delete folder", padding=[8, 2], command=self.delete_skip_folder)
-        skip_delete_button.grid(row=5, column=4, columnspan=2, sticky="new", rowspan=1)
-
+        skip_delete_button.grid(row=5, column=4, sticky="nwes", rowspan=1, columnspan=2)
+        
     def delete_skip_folder(self):
         selection = self.skip_folders_listbox.curselection()
         if not selection:
