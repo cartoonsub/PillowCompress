@@ -61,23 +61,27 @@ class InputFrame(ttk.Frame):
         self.folder_button.grid(row=1, column=4, sticky="ew")
 
     def create_listbox(self):
-        skip_folders_default = ["Done"]
+        skip_folders_default = ["Done"] # брать потом из конфига
         self.skip_folders = StringVar(value=skip_folders_default)
 
         self.skip_label = ttk.Label(self, text="Skip folders:")
         self.skip_label.grid(row=2, column=0, sticky="nw", pady=0)
 
+        self.grid_rowconfigure(3, weight=0)
+        self.grid_columnconfigure(3, weight=0)
+        self.grid_columnconfigure(4, weight=0)
+
+        self.skip_folders_listbox = Listbox(self, listvariable=self.skip_folders, height=5, yscrollcommand=True)
+        self.skip_folders_listbox.grid(row=3, column=0, sticky="nwe", columnspan=4, rowspan=2)
+
         self.skip_folders_entry = ttk.Entry(self)
-        self.skip_folders_entry.grid(row=3, column=4, columnspan=6, rowspan=1, sticky="new")
+        self.skip_folders_entry.grid(row=3, column=4, sticky="nwe", rowspan=1, columnspan=2)
 
         skip_add_button = ttk.Button(self, text="Add folder", padding=[8, 2], command=self.add_skip_folder)
-        skip_add_button.grid(row=4, column=4, sticky="new")
-
-        self.skip_folders_listbox = Listbox(self, listvariable=self.skip_folders)
-        self.skip_folders_listbox.grid(row=3, column=0, columnspan=4, sticky="nsew")
+        skip_add_button.grid(row=4, column=4, columnspan=2, sticky="new", rowspan=1)
 
         skip_delete_button = ttk.Button(self, text="Delete folder", padding=[8, 2], command=self.delete_skip_folder)
-        skip_delete_button.grid(row=5, column=4, sticky="new")
+        skip_delete_button.grid(row=5, column=4, columnspan=2, sticky="new", rowspan=1)
 
     def delete_skip_folder(self):
         selection = self.skip_folders_listbox.curselection()
@@ -87,5 +91,7 @@ class InputFrame(ttk.Frame):
         self.skip_folders_listbox.delete(selection[0])
 
     def add_skip_folder(self):
-        self.new_skip_folder = self.skip_folders_entry.get()
-        self.skip_folders_listbox.insert(0, self.new_skip_folder)
+        new_skip_folder = self.skip_folders_entry.get()
+        if not new_skip_folder:
+            return
+        self.skip_folders_listbox.insert(0, new_skip_folder)

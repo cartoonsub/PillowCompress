@@ -25,6 +25,7 @@ root = Tk()
 root.title("Compressor")
 center_window(root)
 root.resizable(False, False)
+root.attributes('-topmost', True)
 root.iconbitmap(default="app/tkinter/favicon.ico")
 
 # Configure 6 columns
