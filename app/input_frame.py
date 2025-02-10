@@ -7,8 +7,10 @@ import os
 class InputFrame(ttk.Frame):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
-        
-        self.pack(anchor=NW, fill=X, padx=10, pady=10, expand=True)
+        self.grid(row=0, column=0, columnspan=6, rowspan=1, sticky="nsew", padx=10, pady=10)
+
+        for c in range(6): self.columnconfigure(index=c, weight=1)
+        for r in range(6): self.rowconfigure(index=r, weight=1)
 
         self.create_folder_input()
         # self.create_listbox()
@@ -43,21 +45,20 @@ class InputFrame(ttk.Frame):
         self.folder_entry_var = StringVar()
 
         self.name_label = ttk.Label(self, text="Folder:")
-        self.name_label.pack(anchor=NW)
+        self.name_label.grid(row=0, column=0, sticky="nw", pady=0)
 
         self.check = (self.register(self.is_valid_folder), "%P")
 
-        self.folder_entry = ttk.Entry(self, validate="all",
-                                      validatecommand=self.check, textvariable=self.folder_entry_var)
-        self.folder_entry.place(anchor=NW, relwidth=0.75)
-        self.folder_entry_var.trace_add("write", lambda name, index,
-                                        mode: self.is_valid_folder(self.folder_entry_var.get()))
+        self.folder_entry = ttk.Entry(self, validate="all", validatecommand=self.check, textvariable=self.folder_entry_var)
+        self.folder_entry.grid(row=1, column=5, sticky="nw")
+        # self.folder_entry_var.trace_add("write", lambda name, index,
+        #                                 mode: self.is_valid_folder(self.folder_entry_var.get()))
 
-        self.error_label = ttk.Label(self, foreground="red", textvariable=self.errmsg)
-        self.error_label.pack(padx=5, pady=5, anchor=NW, fill=X)
+        # self.error_label = ttk.Label(self, foreground="red", textvariable=self.errmsg)
+        # self.error_label.pack(padx=5, pady=5, anchor=NW)
 
-        self.folder_button = ttk.Button(self, text="Choose folder", padding=[8, 2], command=self.choose_folder)
-        self.folder_button.place(anchor=NW, relx=0.25)
+        # self.folder_button = ttk.Button(self, text="Choose folder", padding=[8, 2], command=self.choose_folder)
+        # self.folder_button.place(anchor=NW, relx=0.25)
 
     def create_listbox(self):
         skip_folders_default = ["Done"]

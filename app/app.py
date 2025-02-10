@@ -27,6 +27,16 @@ center_window(root)
 root.resizable(False, False)
 root.iconbitmap(default="app/tkinter/favicon.ico")
 
+# Configure 6 columns
+for c in range(6):
+    root.columnconfigure(index=c, weight=1)
+
+# Configure 3 rows
+for r in range(3):
+    root.rowconfigure(index=r, weight=1)
+
 input_frame = InputFrame(root, borderwidth=1, relief="solid", padding=[8, 12])
+
+
 
 root.mainloop()
