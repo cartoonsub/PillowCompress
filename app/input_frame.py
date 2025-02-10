@@ -13,7 +13,7 @@ class InputFrame(ttk.Frame):
         for r in range(6): self.rowconfigure(index=r, weight=1)
 
         self.create_folder_input()
-        # self.create_listbox()
+        self.create_listbox()
 
     def choose_folder(self):
         folder_path = filedialog.askdirectory()
@@ -47,38 +47,45 @@ class InputFrame(ttk.Frame):
         self.name_label = ttk.Label(self, text="Folder:")
         self.name_label.grid(row=0, column=0, sticky="nw", pady=0)
 
+        self.error_label = ttk.Label(self, foreground="red", textvariable=self.errmsg)
+        self.error_label.grid(row=0, column=2, sticky='nw', pady=0)
+
         self.check = (self.register(self.is_valid_folder), "%P")
 
         self.folder_entry = ttk.Entry(self, validate="all", validatecommand=self.check, textvariable=self.folder_entry_var)
-        self.folder_entry.grid(row=1, column=5, sticky="nw")
-        # self.folder_entry_var.trace_add("write", lambda name, index,
-        #                                 mode: self.is_valid_folder(self.folder_entry_var.get()))
+        self.folder_entry.grid(row=1, column=0, columnspan=4, sticky="ew")
+       
+        self.folder_entry_var.trace_add("write", lambda name, index, mode: self.is_valid_folder(self.folder_entry_var.get()))
 
-        # self.error_label = ttk.Label(self, foreground="red", textvariable=self.errmsg)
-        # self.error_label.pack(padx=5, pady=5, anchor=NW)
-
-        # self.folder_button = ttk.Button(self, text="Choose folder", padding=[8, 2], command=self.choose_folder)
-        # self.folder_button.place(anchor=NW, relx=0.25)
+        self.folder_button = ttk.Button(self, text="Choose folder", padding=[8, 2], command=self.choose_folder)
+        self.folder_button.grid(row=1, column=4, sticky="ew")
 
     def create_listbox(self):
         skip_folders_default = ["Done"]
         self.skip_folders = StringVar(value=skip_folders_default)
 
+        self.skip_label = ttk.Label(self, text="Skip folders:")
+        self.skip_label.grid(row=2, column=0, sticky="nw", pady=0)
+
         self.skip_folders_entry = ttk.Entry(self)
-        self.skip_folders_entry.place(anchor=NW, relwidth=0.75)
+        self.skip_folders_entry.grid(row=3, column=4, columnspan=6, rowspan=1, sticky="new")
 
         skip_add_button = ttk.Button(self, text="Add folder", padding=[8, 2], command=self.add_skip_folder)
+        skip_add_button.grid(row=4, column=4, sticky="new")
 
         self.skip_folders_listbox = Listbox(self, listvariable=self.skip_folders)
-        self.skip_folders_listbox.place(anchor=NW, relwidth=0.75)
+        self.skip_folders_listbox.grid(row=3, column=0, columnspan=4, sticky="nsew")
 
-    # def delete():
-    #     selection = languages_listbox.curselection()
-    #     # мы можем получить удаляемый элемент по индексу
-    #     # selected_language = languages_listbox.get(selection[0])
-    #     languages_listbox.delete(selection[0])
- 
- 
+        skip_delete_button = ttk.Button(self, text="Delete folder", padding=[8, 2], command=self.delete_skip_folder)
+        skip_delete_button.grid(row=5, column=4, sticky="new")
+
+    def delete_skip_folder(self):
+        selection = self.skip_folders_listbox.curselection()
+        if not selection:
+            return
+
+        self.skip_folders_listbox.delete(selection[0])
+
     def add_skip_folder(self):
         self.new_skip_folder = self.skip_folders_entry.get()
         self.skip_folders_listbox.insert(0, self.new_skip_folder)
