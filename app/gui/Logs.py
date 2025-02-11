@@ -15,12 +15,12 @@ class Logs(ttk.Frame):
         for r in range(2): self.rowconfigure(index=r, weight=1)
 
         self.create_logs_buttons()
-        types = ['Processing', 'Errors', 'Success']
-        for type in types:
-            self.create_logslist(type)
+        self.create_listbox_processings()
+        self.create_listbox_errors()
+        self.create_listbox_success()
 
     def create_logs_buttons(self):
-        self.process_button = ttk.Button(self, text='Processing', padding=[8, 2])
+        self.process_button = ttk.Button(self, text='Processing', padding=[8, 2], command=lambda: self.hide_widget(self.Processing))
         self.process_button.grid(row=0, column=0, sticky="nsew")
 
         self.errors_button = ttk.Button(self, text='Errors', padding=[8, 2])
@@ -29,19 +29,29 @@ class Logs(ttk.Frame):
         self.success_button = ttk.Button(self, text='success', padding=[8, 2])
         self.success_button.grid(row=0, column=2, sticky="nsew")
 
-    def create_logslist(self, type):
-        if type == 'Processing':
-            self.type = Listbox(self, selectmode=SINGLE, height=10, bg='black', fg='gray')
-        elif type == 'Errors':
-            self.type = Listbox(self, selectmode=SINGLE, height=10, bg='black', fg='red')
-        elif type == 'Success':
-            self.type = Listbox(self, selectmode=SINGLE, height=10, bg='black', fg='green')
+    def create_listbox_processings(self):
+        self.Processing = Listbox(self, selectmode=MULTIPLE, height=10, bg='black', fg='gray')
+        self.Processing.grid(row=1, column=0, columnspan=3, sticky="nsew")
 
-        self.type.grid(row=1, column=0, columnspan=3, sticky="nsew")
-
-        self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.type.yview)
+        self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.Processing.yview)
         self.scrollbar.grid(row=1, column=3, sticky="ns")
-        self.type.config(yscrollcommand=self.scrollbar.set)
+        self.Processing.config(yscrollcommand=self.scrollbar.set)
+
+    def create_listbox_errors(self):
+        self.Errors = Listbox(self, selectmode=MULTIPLE, height=10, bg='black', fg='red')
+        self.Errors.grid(row=1, column=0, columnspan=3, sticky="nsew")
+
+        self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.Errors.yview)
+        self.scrollbar.grid(row=1, column=3, sticky="ns")
+        self.Errors.config(yscrollcommand=self.scrollbar.set)
+
+    def create_listbox_success(self):
+        self.Success = Listbox(self, selectmode=MULTIPLE, height=10, bg='black', fg='green')
+        self.Success.grid(row=1, column=0, columnspan=3, sticky="nsew")
+
+        self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.Success.yview)
+        self.scrollbar.grid(row=1, column=3, sticky="ns")
+        self.Success.config(yscrollcommand=self.scrollbar.set)
 
     def hide_widget(self, widget):
         widget.grid_remove()
