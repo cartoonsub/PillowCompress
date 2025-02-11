@@ -55,7 +55,7 @@ def main():
             'height': 1080
         },
         'max_bitrate_video': 5000,
-        # 'max_bitrate_audio': '192k',
+        # 'max_bitrate_audio': '192',
         # 'max_sizes_video': {
         #     'width': 1920,
         #     'height': 1080
