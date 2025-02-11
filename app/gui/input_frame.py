@@ -40,19 +40,6 @@ class InputFrame(ttk.Frame):
 
         return True
 
-    def delete_skip_folder(self):
-        selection = self.skip_folders_listbox.curselection()
-        if not selection:
-            return
-
-        self.skip_folders_listbox.delete(selection[0])
-
-    def add_skip_folder(self):
-        new_skip_folder = self.skip_folders_entry.get()
-        if not new_skip_folder:
-            return
-        self.skip_folders_listbox.insert(0, new_skip_folder)
-
     def create_folder_input(self):
         self.errmsg = StringVar()
         self.folder_entry_var = StringVar()
@@ -95,3 +82,16 @@ class InputFrame(ttk.Frame):
 
         skip_delete_button = ttk.Button(self, text="Delete folder", padding=[8, 2], command=self.delete_skip_folder)
         skip_delete_button.grid(row=4, column=5, sticky="we", columnspan=1)
+
+    def delete_skip_folder(self):
+        selection = self.skip_folders_listbox.curselection()
+        if not selection:
+            return
+
+        self.skip_folders_listbox.delete(selection[0])
+
+    def add_skip_folder(self):
+        new_skip_folder = self.skip_folders_entry.get()
+        if not new_skip_folder:
+            return
+        self.skip_folders_listbox.insert(0, new_skip_folder)
