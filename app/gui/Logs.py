@@ -15,7 +15,9 @@ class Logs(ttk.Frame):
         for r in range(2): self.rowconfigure(index=r, weight=1)
 
         self.create_logs_buttons()
-        self.create_logslist()
+        types = ['Processing', 'Errors', 'Success']
+        for type in types:
+            self.create_logslist(type)
 
     def create_logs_buttons(self):
         self.process_button = ttk.Button(self, text='Processing', padding=[8, 2])
@@ -27,10 +29,22 @@ class Logs(ttk.Frame):
         self.success_button = ttk.Button(self, text='success', padding=[8, 2])
         self.success_button.grid(row=0, column=2, sticky="nsew")
 
-    def create_logslist(self):
-        self.logs_listbox = Listbox(self, selectmode=SINGLE, height=10)
-        self.logs_listbox.grid(row=1, column=0, columnspan=3, sticky="nsew")
+    def create_logslist(self, type):
+        if type == 'Processing':
+            self.type = Listbox(self, selectmode=SINGLE, height=10, bg='black', fg='gray')
+        elif type == 'Errors':
+            self.type = Listbox(self, selectmode=SINGLE, height=10, bg='black', fg='red')
+        elif type == 'Success':
+            self.type = Listbox(self, selectmode=SINGLE, height=10, bg='black', fg='green')
 
-        self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.logs_listbox.yview)
+        self.type.grid(row=1, column=0, columnspan=3, sticky="nsew")
+
+        self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.type.yview)
         self.scrollbar.grid(row=1, column=3, sticky="ns")
-        self.logs_listbox.config(yscrollcommand=self.scrollbar.set)
+        self.type.config(yscrollcommand=self.scrollbar.set)
+
+    def hide_widget(self, widget):
+        widget.grid_remove()
+
+    def show_widget(self, widget):
+        widget.grid()
