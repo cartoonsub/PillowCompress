@@ -4,7 +4,7 @@ from tkinter import filedialog
 
 from gui.input_frame import InputFrame
 from gui.SettingsFrame import SettingsFrame
-from gui.MainButtons import MainButtons
+from gui.Controls import Controls
 
 import re
 import os
@@ -30,14 +30,11 @@ root.resizable(False, False)
 root.attributes('-topmost', True)
 root.iconbitmap(default="app/tkinter/favicon.ico")
 
-for c in range(6):
-    root.columnconfigure(index=c, weight=1)
-
-for r in range(3):
-    root.rowconfigure(index=r, weight=1)
+for c in range(6): root.columnconfigure(index=c, weight=1)
+for r in range(6): root.rowconfigure(index=r, weight=1)
 
 input_frame = InputFrame(root, borderwidth=1, relief="solid", padding=[8, 12])
 settings_frame = SettingsFrame(root, borderwidth=1, relief="solid", padding=[8, 12])
-main_buttons = MainButtons(root, borderwidth=1, relief="solid", padding=[8, 12])
+controls = Controls(root, borderwidth=1, relief="solid", padding=[8, 12])
 
 root.mainloop()
