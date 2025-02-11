@@ -17,7 +17,7 @@ class SettingsFrame(ttk.Frame):
 
     def create_image_settings(self):
         label = ttk.Label(self, text="Image settings", justify="center", borderwidth=2, relief="ridge", anchor="center")
-        label.grid(row=0, column=0, columnspan=3, sticky="nsew")
+        label.grid(row=0, column=0, columnspan=2, sticky="nsew")
         
         self.label_quality = ttk.Label(self, text="Quality:", borderwidth=2, relief="ridge", anchor="w", justify="left")
         self.label_quality.grid(row=1, column=0, columnspan=2, sticky="nsew")
@@ -69,4 +69,4 @@ class SettingsFrame(ttk.Frame):
 
     def create_video_setting(self):
         label = ttk.Label(self, text="Video settings", justify="center", borderwidth=2, relief="ridge", anchor="center")
-        label.grid(row=0, column=3, columnspan=3, sticky="nsew")
+        label.grid(row=0, column=2, columnspan=4, sticky="nsew")
