@@ -29,10 +29,10 @@ class SettingsFrame(ttk.Frame):
         self.label_maxheight.grid(row=3, column=0, columnspan=2, sticky="nsew")
         
         self.quality = StringVar(value=90) # брать потом из конфига
-        self.check_quality = (self.register(self.change_quality), "%P")
-        self.quality.trace_add("write", lambda name, index, mode: self.change_quality())
+        self.check_quality = (self.register(self.change_value), "%P")
+        self.quality.trace_add("write", lambda name, index, mode: self.change_value(self.quality_spinbox, self.label_quality, self.quality, [1, 100], "Quality"))
         
-        self.quality_spinbox = ttk.Spinbox(self, from_=1, to=100, textvariable=self.quality, command=self.change_quality, validatecommand=self.check_quality)
+        self.quality_spinbox = ttk.Spinbox(self, from_=1, to=100, textvariable=self.quality, validatecommand=self.check_quality)
         self.quality_spinbox.grid(row=1, column=2, columnspan=1, sticky="nw")
         self.quality_spinbox.set(90)
 
@@ -45,10 +45,10 @@ class SettingsFrame(ttk.Frame):
         self.maxwidth_spinbox.set(1920)
 
         self.maxheight = StringVar(value=1080) # брать потом из конфига
-        self.check_maxheight = (self.register(self.change_maxheight), "%P")
-        self.maxheight.trace_add("write", lambda name, index, mode: self.change_maxheight())
+        self.check_maxheight = (self.register(self.change_value), "%P")
+        self.maxheight.trace_add("write", lambda name, index, mode: self.change_value(self.maxheight_spinbox, self.label_maxheight, self.maxheight, [1, 10000], "Max height"))
 
-        self.maxheight_spinbox = ttk.Spinbox(self, from_=1, to=10000, textvariable=self.maxheight, command=self.change_maxheight, validatecommand=self.check_maxheight)
+        self.maxheight_spinbox = ttk.Spinbox(self, from_=1, to=10000, textvariable=self.maxheight, validatecommand=self.check_maxheight)
         self.maxheight_spinbox.grid(row=3, column=2, columnspan=1, sticky="nw")
         self.maxheight_spinbox.set(1080)
     
@@ -60,61 +60,12 @@ class SettingsFrame(ttk.Frame):
             spinbox.insert(0, spinbox.get())
             return
 
-        print(value)
         if value > limits[1] or value < limits[0]:
             var.set('Exceeds limits: ' + str(limits[0]) + ' - ' + str(limits[1]))
             return
 
         var.set(value)
         label["text"] = f"{label_text}: {value}"
-
-    def change_quality(self):
-        try:
-            value = int(self.quality_spinbox.get())
-        except ValueError:
-            self.quality_spinbox.delete(0, END)
-            self.quality_spinbox.insert(0, 90)
-            return
-
-        if value > 100 or value < 1:
-            self.quality_spinbox.delete(0, END)
-            self.quality_spinbox.insert(0, 90)
-            return
-
-        self.quality.set(value)
-        self.label_quality["text"] = f"Quality: {value}"
-
-    def change_maxwidth(self):
-        try:
-            value = int(self.maxwidth_spinbox.get())
-        except ValueError:
-            self.maxwidth_spinbox.delete(0, END)
-            self.maxwidth_spinbox.insert(0, 1920)
-            return
-
-        if value > 10000 or value < 1:
-            self.maxwidth_spinbox.delete(0, END)
-            self.maxwidth_spinbox.insert(0, 1920)
-            return
-
-        self.maxwidth.set(value)
-        self.label_maxwidth["text"] = f"Max width: {value}"
-
-    def change_maxheight(self):
-        try:
-            value = int(self.maxheight_spinbox.get())
-        except ValueError:
-            self.maxheight_spinbox.delete(0, END)
-            self.maxheight_spinbox.insert(0, 1080)
-            return
-
-        if value > 10000 or value < 1:
-            self.maxheight_spinbox.delete(0, END)
-            self.maxheight_spinbox.insert(0, 1080)
-            return
-
-        self.maxheight.set(value)
-        self.label_maxheight["text"] = f"Max height: {value}"
 
     def create_video_setting(self):
         label = ttk.Label(self, text="Video settings", justify="center", borderwidth=2, relief="ridge", anchor="center")
