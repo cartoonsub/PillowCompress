@@ -13,6 +13,7 @@ class SettingsFrame(ttk.Frame):
         for r in range(6): self.rowconfigure(index=r, weight=1)
 
         self.create_image_settings()
+        self.create_video_setting()
 
     def create_image_settings(self):
         label = ttk.Label(self, text="Image settings", justify="center", borderwidth=2, relief="ridge", anchor="center")
@@ -36,10 +37,10 @@ class SettingsFrame(ttk.Frame):
         self.quality_spinbox.set(90)
 
         self.maxwidth = StringVar(value=1920) # брать потом из конфига
-        self.check_maxwidth = (self.register(self.change_maxwidth), "%P")
-        self.maxwidth.trace_add("write", lambda name, index, mode: self.change_maxwidth())
+        self.check_maxwidth = (self.register(self.change_value), "%P")
+        self.maxwidth.trace_add("write", lambda name, index, mode: self.change_value(self.maxwidth_spinbox, self.label_maxwidth, self.maxwidth, [1, 10000], "Max width"))
         
-        self.maxwidth_spinbox = ttk.Spinbox(self, from_=1, to=10000, textvariable=self.maxwidth, command=self.change_maxwidth, validatecommand=self.check_maxwidth)
+        self.maxwidth_spinbox = ttk.Spinbox(self, from_=1, to=10000, textvariable=self.maxwidth, validatecommand=self.check_maxwidth)
         self.maxwidth_spinbox.grid(row=2, column=2, columnspan=1, sticky="nw")
         self.maxwidth_spinbox.set(1920)
 
@@ -51,6 +52,22 @@ class SettingsFrame(ttk.Frame):
         self.maxheight_spinbox.grid(row=3, column=2, columnspan=1, sticky="nw")
         self.maxheight_spinbox.set(1080)
     
+    def change_value(self, spinbox, label, var, limits, label_text):
+        try:
+            value = int(spinbox.get())
+        except ValueError:
+            spinbox.delete(0, END)
+            spinbox.insert(0, spinbox.get())
+            return
+
+        print(value)
+        if value > limits[1] or value < limits[0]:
+            var.set('Exceeds limits: ' + str(limits[0]) + ' - ' + str(limits[1]))
+            return
+
+        var.set(value)
+        label["text"] = f"{label_text}: {value}"
+
     def change_quality(self):
         try:
             value = int(self.quality_spinbox.get())
@@ -99,3 +116,6 @@ class SettingsFrame(ttk.Frame):
         self.maxheight.set(value)
         self.label_maxheight["text"] = f"Max height: {value}"
 
+    def create_video_setting(self):
+        label = ttk.Label(self, text="Video settings", justify="center", borderwidth=2, relief="ridge", anchor="center")
+        label.grid(row=0, column=3, columnspan=3, sticky="nsew")
