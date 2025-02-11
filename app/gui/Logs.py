@@ -16,21 +16,26 @@ class Logs(ttk.Frame):
 
         self.create_logs_buttons()
         self.create_listbox_processings()
+        self.Processing.grid_remove()
         self.create_listbox_errors()
+        self.Errors.grid_remove()
         self.create_listbox_success()
+        self.Success.grid_remove()
+
+        self.add_test_data()
 
     def create_logs_buttons(self):
-        self.process_button = ttk.Button(self, text='Processing', padding=[8, 2], command=lambda: self.hide_widget(self.Processing))
+        self.process_button = ttk.Button(self, text='Processing', padding=[8, 2], command=lambda: self.show_widget(self.Processing))
         self.process_button.grid(row=0, column=0, sticky="nsew")
 
-        self.errors_button = ttk.Button(self, text='Errors', padding=[8, 2])
+        self.errors_button = ttk.Button(self, text='Errors', padding=[8, 2], command=lambda: self.show_widget(self.Errors))
         self.errors_button.grid(row=0, column=1, sticky="nsew")
 
-        self.success_button = ttk.Button(self, text='success', padding=[8, 2])
+        self.success_button = ttk.Button(self, text='success', padding=[8, 2], command=lambda: self.show_widget(self.Success))
         self.success_button.grid(row=0, column=2, sticky="nsew")
 
     def create_listbox_processings(self):
-        self.Processing = Listbox(self, selectmode=MULTIPLE, height=10, bg='black', fg='gray')
+        self.Processing = Listbox(self, selectmode=MULTIPLE, height=10)
         self.Processing.grid(row=1, column=0, columnspan=3, sticky="nsew")
 
         self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.Processing.yview)
@@ -38,7 +43,7 @@ class Logs(ttk.Frame):
         self.Processing.config(yscrollcommand=self.scrollbar.set)
 
     def create_listbox_errors(self):
-        self.Errors = Listbox(self, selectmode=MULTIPLE, height=10, bg='black', fg='red')
+        self.Errors = Listbox(self, selectmode=MULTIPLE, height=10)
         self.Errors.grid(row=1, column=0, columnspan=3, sticky="nsew")
 
         self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.Errors.yview)
@@ -46,15 +51,21 @@ class Logs(ttk.Frame):
         self.Errors.config(yscrollcommand=self.scrollbar.set)
 
     def create_listbox_success(self):
-        self.Success = Listbox(self, selectmode=MULTIPLE, height=10, bg='black', fg='green')
+        self.Success = Listbox(self, selectmode=MULTIPLE, height=10)
         self.Success.grid(row=1, column=0, columnspan=3, sticky="nsew")
 
         self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.Success.yview)
         self.scrollbar.grid(row=1, column=3, sticky="ns")
         self.Success.config(yscrollcommand=self.scrollbar.set)
 
-    def hide_widget(self, widget):
-        widget.grid_remove()
-
     def show_widget(self, widget):
+        self.Processing.grid_remove()
+        self.Errors.grid_remove()
+        self.Success.grid_remove()
         widget.grid()
+
+    def add_test_data(self):
+        for i in range(100):
+            self.Processing.insert(END, f"Processing {i}")
+            self.Errors.insert(END, f"Error {i}")
+            self.Success.insert(END, f"Success {i}")
