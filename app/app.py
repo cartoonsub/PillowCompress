@@ -2,8 +2,9 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
-from input_frame import InputFrame
-from SettingsFrame import SettingsFrame
+from gui.input_frame import InputFrame
+from gui.SettingsFrame import SettingsFrame
+from gui.MainButtons import MainButtons
 
 import re
 import os
@@ -29,16 +30,14 @@ root.resizable(False, False)
 root.attributes('-topmost', True)
 root.iconbitmap(default="app/tkinter/favicon.ico")
 
-# Configure 6 columns
 for c in range(6):
     root.columnconfigure(index=c, weight=1)
 
-# Configure 3 rows
 for r in range(3):
     root.rowconfigure(index=r, weight=1)
 
 input_frame = InputFrame(root, borderwidth=1, relief="solid", padding=[8, 12])
 settings_frame = SettingsFrame(root, borderwidth=1, relief="solid", padding=[8, 12])
-
+main_buttons = MainButtons(root, borderwidth=1, relief="solid", padding=[8, 12])
 
 root.mainloop()
