@@ -16,53 +16,61 @@ class Logs(ttk.Frame):
 
         self.create_logs_buttons()
         self.create_listbox_processings()
-        self.Processing.grid_remove()
         self.create_listbox_errors()
-        self.Errors.grid_remove()
         self.create_listbox_success()
+
+        self.Errors.grid_remove()
         self.Success.grid_remove()
+        self.scrollbar_errors.grid_remove()
+        self.scrollbar_success.grid_remove()
 
         self.add_test_data()
 
     def create_logs_buttons(self):
-        self.process_button = ttk.Button(self, text='Processing', padding=[8, 2], command=lambda: self.show_widget(self.Processing))
+        self.process_button = ttk.Button(self, text='Processing', padding=[8, 2], command=lambda: self.show_widget(self.Processing, self.scrollbar_processing))
         self.process_button.grid(row=0, column=0, sticky="nsew")
 
-        self.errors_button = ttk.Button(self, text='Errors', padding=[8, 2], command=lambda: self.show_widget(self.Errors))
+        self.errors_button = ttk.Button(self, text='Errors', padding=[8, 2], command=lambda: self.show_widget(self.Errors, self.scrollbar_errors))
         self.errors_button.grid(row=0, column=1, sticky="nsew")
 
-        self.success_button = ttk.Button(self, text='success', padding=[8, 2], command=lambda: self.show_widget(self.Success))
+        self.success_button = ttk.Button(self, text='success', padding=[8, 2], command=lambda: self.show_widget(self.Success, self.scrollbar_success))
         self.success_button.grid(row=0, column=2, sticky="nsew")
 
     def create_listbox_processings(self):
-        self.Processing = Listbox(self, selectmode=MULTIPLE, height=10)
+        self.Processing = Listbox(self, selectmode=MULTIPLE, height=6)
         self.Processing.grid(row=1, column=0, columnspan=3, sticky="nsew")
 
-        self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.Processing.yview)
-        self.scrollbar.grid(row=1, column=3, sticky="ns")
-        self.Processing.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar_processing = ttk.Scrollbar(self, orient=VERTICAL, command=self.Processing.yview)
+        self.scrollbar_processing.grid(row=1, column=3, sticky="ns")
+        self.Processing.config(yscrollcommand=self.scrollbar_processing.set)
 
     def create_listbox_errors(self):
-        self.Errors = Listbox(self, selectmode=MULTIPLE, height=10)
+        self.Errors = Listbox(self, selectmode=MULTIPLE, height=6)
         self.Errors.grid(row=1, column=0, columnspan=3, sticky="nsew")
 
-        self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.Errors.yview)
-        self.scrollbar.grid(row=1, column=3, sticky="ns")
-        self.Errors.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar_errors = ttk.Scrollbar(self, orient=VERTICAL, command=self.Errors.yview)
+        self.scrollbar_errors.grid(row=1, column=3, sticky="ns")
+        self.Errors.config(yscrollcommand=self.scrollbar_errors.set)
 
     def create_listbox_success(self):
-        self.Success = Listbox(self, selectmode=MULTIPLE, height=10)
+        self.Success = Listbox(self, selectmode=MULTIPLE, height=6)
         self.Success.grid(row=1, column=0, columnspan=3, sticky="nsew")
 
-        self.scrollbar = ttk.Scrollbar(self, orient=VERTICAL, command=self.Success.yview)
-        self.scrollbar.grid(row=1, column=3, sticky="ns")
-        self.Success.config(yscrollcommand=self.scrollbar.set)
+        self.scrollbar_success = ttk.Scrollbar(self, orient=VERTICAL, command=self.Success.yview)
+        self.scrollbar_success.grid(row=1, column=3, sticky="ns")
+        self.Success.config(yscrollcommand=self.scrollbar_success.set)
 
-    def show_widget(self, widget):
+    def show_widget(self, widget, scrollbar):
         self.Processing.grid_remove()
         self.Errors.grid_remove()
         self.Success.grid_remove()
+
+        self.scrollbar_errors.grid_remove()
+        self.scrollbar_processing.grid_remove()
+        self.scrollbar_success.grid_remove()
+
         widget.grid()
+        scrollbar.grid()
 
     def add_test_data(self):
         for i in range(100):

@@ -16,7 +16,7 @@ def center_window(root):
     screen_height = root.winfo_screenheight()
     x = ((screen_width - root.winfo_reqwidth()) // 2) - 300
     y = ((screen_height - root.winfo_reqheight()) // 2) - 200
-    root.geometry(f"800x600+{x}+{y}")
+    root.geometry(f"800x700+{x}+{y}")
 
 
 root = Tk()
