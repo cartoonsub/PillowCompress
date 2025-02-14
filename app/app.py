@@ -7,32 +7,36 @@ from gui.SettingsFrame import SettingsFrame
 from gui.Controls import Controls
 from gui.Logs import Logs
 
+class Compressor():
+    def __init__(self):
+        self.init_gui()
+        self.set_frames()
+        self.root.mainloop()
 
-def center_window(root):
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    x = ((screen_width - root.winfo_reqwidth()) // 2) - 300
-    y = ((screen_height - root.winfo_reqheight()) // 2) - 300
-    root.geometry(f"800x700+{x}+{y}")
+    def init_gui(self):
+        self.root = Tk()
+        self.root.title("Compressor")
+        self.center_window()
+        self.root.resizable(False, False)
+        self.root.attributes('-topmost', True)
+        self.root.iconbitmap(default="app/assets/favicon.ico")
 
-def main():
-    root = Tk()
-    root.title("Compressor")
-    center_window(root)
-    root.resizable(False, False)
-    root.attributes('-topmost', True)
-    root.iconbitmap(default="app/tkinter/favicon.ico")
+    def center_window(self):
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        x = ((screen_width - self.root.winfo_reqwidth()) // 2) - 300
+        y = ((screen_height - self.root.winfo_reqheight()) // 2) - 300
+        self.root.geometry(f"800x700+{x}+{y}")
 
-    for c in range(6): root.columnconfigure(index=c, weight=1)
-    for r in range(6): root.rowconfigure(index=r, weight=1)
+    def set_frames(self):
+        for c in range(6): self.root.columnconfigure(index=c, weight=1)
+        for r in range(6): self.root.rowconfigure(index=r, weight=1)
 
-    input_frame = InputFrame(root, borderwidth=1, relief="solid", padding=[8, 12])
-    settings_frame = SettingsFrame(root, borderwidth=1, relief="solid", padding=[8, 12])
-    controls = Controls(root, borderwidth=1, relief="solid", padding=[8, 12])
-    logs = Logs(root, borderwidth=1, relief="solid", padding=[8, 12])
-
-    root.mainloop()
+        self.input_frame = InputFrame(self.root, borderwidth=1, relief="solid", padding=[8, 12])
+        self.settings_frame = SettingsFrame(self.root, borderwidth=1, relief="solid", padding=[8, 12])
+        self.controls = Controls(self.root, borderwidth=1, relief="solid", padding=[8, 12])
+        self.logs = Logs(self.root, borderwidth=1, relief="solid", padding=[8, 12])
 
 
 if __name__ == '__main__':
-    main()
+    Compressor()
