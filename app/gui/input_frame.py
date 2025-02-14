@@ -2,63 +2,68 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
+from functools import partial
 import os
 
 class InputFrame(ttk.Frame):
-    def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs)
+    def __init__(self, master) -> None:
+        super().__init__(master, borderwidth=1, relief="solid", padding=[8, 12])
         self.grid(row=0, column=0, columnspan=6, rowspan=1, sticky="nsew", padx=10, pady=10)
 
         for c in range(6): self.columnconfigure(index=c, weight=1)
         for r in range(6): self.rowconfigure(index=r, weight=1)
 
+        self.init_params()
+
         self.create_folder_input()
         self.create_listbox()
 
-    def choose_folder(self):
-        folder_path = filedialog.askdirectory()
+    def init_params(self) -> None:
+        self.folder = StringVar()
+
+    def create_folder_input(self) -> None:
+        errmsg = StringVar()
+
+        name_label = ttk.Label(self, text="Folder:")
+        name_label.grid(row=0, column=0, sticky="nw", pady=0)
+
+        error_label = ttk.Label(self, foreground="red", textvariable=errmsg)
+        error_label.grid(row=0, column=2, sticky='nw', pady=0)
+
+        checker = self.register(partial(self.is_valid_folder, error_label=error_label, errmsg=errmsg))
+        folder_entry = ttk.Entry(self, validate="all", validatecommand=(checker, "%P"), textvariable=self.folder)
+        folder_entry.grid(row=1, column=0, columnspan=4, sticky="ew")
+
+        self.folder.trace_add("write", lambda name, index, mode: self.is_valid_folder(self.folder.get(), error_label, errmsg))
+
+        folder_button = ttk.Button(self, text="Choose folder", padding=[8, 2], command=partial(self.choose_folder, errmsg, folder_entry))
+        folder_button.grid(row=1, column=4, sticky="ew")
+
+    def is_valid_folder(self, folder_path, error_label, errmsg) -> bool:
         if not folder_path:
-            self.errmsg.set("Please enter a folder path")
-
-        if not os.path.exists(folder_path):
-            self.errmsg.set("Folder does not exist: " + folder_path)
-
-        self.folder_entry.delete(0, END)
-        self.folder_entry.insert(0, folder_path)
-
-    def is_valid_folder(self, folder_path):
-        if not folder_path:
-            self.errmsg.set("Please enter a folder path")
-            self.error_label.config(foreground="red")
+            errmsg.set("Please enter a folder path")
+            error_label.config(foreground="red")
+            return False
 
         if os.path.exists(folder_path):
-            self.errmsg.set("Correct folder path")
-            self.error_label.config(foreground="green")
+            errmsg.set("Correct folder path")
+            error_label.config(foreground="green")
         else:
-            self.errmsg.set("Folder does not exist: " + folder_path)
-            self.error_label.config(foreground="red")
+            errmsg.set("Folder does not exist: " + folder_path)
+            error_label.config(foreground="red")
 
         return True
 
-    def create_folder_input(self):
-        self.errmsg = StringVar()
-        self.folder_entry_var = StringVar()
+    def choose_folder(self, errmsg, entry) -> None:
+        folder_path = filedialog.askdirectory()
+        if not folder_path:
+            errmsg.set("Please enter a folder path")
 
-        self.name_label = ttk.Label(self, text="Folder:")
-        self.name_label.grid(row=0, column=0, sticky="nw", pady=0)
+        if not os.path.exists(folder_path):
+            errmsg.set("Folder does not exist: " + folder_path)
 
-        self.error_label = ttk.Label(self, foreground="red", textvariable=self.errmsg)
-        self.error_label.grid(row=0, column=2, sticky='nw', pady=0)
-
-        self.check = (self.register(self.is_valid_folder), "%P")
-
-        self.folder_entry = ttk.Entry(self, validate="all", validatecommand=self.check, textvariable=self.folder_entry_var)
-        self.folder_entry.grid(row=1, column=0, columnspan=4, sticky="ew")
-       
-        self.folder_entry_var.trace_add("write", lambda name, index, mode: self.is_valid_folder(self.folder_entry_var.get()))
-
-        self.folder_button = ttk.Button(self, text="Choose folder", padding=[8, 2], command=self.choose_folder)
-        self.folder_button.grid(row=1, column=4, sticky="ew")
+        entry.delete(0, END)
+        entry.insert(0, folder_path)
 
     def create_listbox(self):
         skip_folders_default = ["Done"] # брать потом из конфига
@@ -97,3 +102,7 @@ class InputFrame(ttk.Frame):
             return
         self.skip_folders_listbox.insert(0, new_skip_folder)
         self.skip_folders_entry.delete(0, END)
+
+
+if __name__ == '__main__':
+    pass
