@@ -5,9 +5,8 @@ from tkinter import filedialog
 
 class Controls(ttk.Frame):
     def __init__(self, master, *args, **kwargs):
-        super().__init__(master, *args, **kwargs, borderwidth=1, relief="solid", padding=[8, 12])
-        self.grid(row=2, column=0, columnspan=6, rowspan=1,
-                  sticky="nsew", padx=10, pady=10)
+        super().__init__(master, borderwidth=1, relief="solid", padding=[8, 12])
+        self.grid(row=2, column=0, columnspan=6, rowspan=1, sticky="nsew", padx=10, pady=10)
 
         for c in range(3):
             self.columnconfigure(index=c, weight=1)

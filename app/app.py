@@ -10,7 +10,6 @@ from gui.Logs import Logs
 class CompressorGui():
     def __init__(self):
         self.init_gui()
-        self.init_styles()
         self.set_frames()
         self.root.mainloop()
 
@@ -33,11 +32,11 @@ class CompressorGui():
         for c in range(6): self.root.columnconfigure(index=c, weight=1)
         for r in range(6): self.root.rowconfigure(index=r, weight=1)
 
-        self.input_frame = InputFrame(self.root)
-        self.settings_frame = SettingsFrame(self.root)
-        self.logs = Logs(self.root)
+        input_frame = InputFrame(self.root)
+        settings_frame = SettingsFrame(self.root)
+        logs = Logs(self.root)
 
-        self.controls = Controls(self.root)
+        Controls(self.root, input_frame=input_frame, settings_frame=settings_frame, logs=logs)
 
 
 if __name__ == '__main__':
