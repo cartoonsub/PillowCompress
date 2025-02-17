@@ -41,7 +41,7 @@ class SettingsFrame(ttk.Frame):
         label_maxheight_image.grid(row=3, column=0, columnspan=2, sticky="nsew")
         
         self.img_quality = StringVar(value=90) # брать потом из конфига
-        self.img_quality.trace_add("write", lambda name, index, mode: self.change_value(self.quality_spinbox, label_quality, self.img_quality, [1, 100], "Quality"))
+        self.img_quality.trace_add("write", lambda name, index, mode: self.change_value(quality_spinbox, label_quality, self.img_quality, [1, 100], "Quality"))
         
         check_quality = (self.register(self.change_value), "%P")
         quality_spinbox = ttk.Spinbox(self, from_=1, to=100, textvariable=self.img_quality, validatecommand=check_quality)
@@ -49,7 +49,7 @@ class SettingsFrame(ttk.Frame):
         quality_spinbox.set(90)
 
         self.img_maxwidth = StringVar(value=1920) # брать потом из конфига
-        self.maxwidth.trace_add("write", lambda name, index, mode: self.change_value(maxwidth_spinbox, label_maxwidth_image, self.img_maxwidth, [1, 10000], "Max width"))
+        self.img_maxwidth.trace_add("write", lambda name, index, mode: self.change_value(maxwidth_spinbox, label_maxwidth_image, self.img_maxwidth, [1, 10000], "Max width"))
         
         check_maxwidth = (self.register(self.change_value), "%P")
         maxwidth_spinbox = ttk.Spinbox(self, from_=1, to=10000, textvariable=self.img_maxwidth, validatecommand=check_maxwidth)
