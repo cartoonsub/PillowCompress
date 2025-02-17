@@ -21,6 +21,9 @@ class InputFrame(ttk.Frame):
     def init_params(self) -> None:
         self.folder = StringVar()
 
+        skip_folders_default = ["Done"] # брать потом из конфига
+        self.skip_folders = StringVar(value=skip_folders_default)
+
     def create_folder_input(self) -> None:
         errmsg = StringVar()
 
@@ -65,23 +68,18 @@ class InputFrame(ttk.Frame):
         entry.delete(0, END)
         entry.insert(0, folder_path)
 
-    def create_listbox(self):
-        skip_folders_default = ["Done"] # брать потом из конфига
-        self.skip_folders = StringVar(value=skip_folders_default)
-
-        self.skip_label = ttk.Label(self, text="Skip folders:")
-        self.skip_label.grid(row=2, column=0, sticky="nw", pady=0)
-
-        self.grid_rowconfigure(3, weight=0)
-        self.grid_columnconfigure(3, weight=0)
-        self.grid_columnconfigure(4, weight=0)
+    def create_listbox(self) -> None:
+        skip_label = ttk.Label(self, text="Skip folders:")
+        skip_label.grid(row=2, column=0, sticky="nw", pady=0)
 
         self.skip_folders_listbox = Listbox(self, listvariable=self.skip_folders, height=5, yscrollcommand=True)
         self.skip_folders_listbox.grid(row=3, column=0, sticky="nwes", columnspan=4, rowspan=2)
 
+
         self.skip_folders_entry = ttk.Entry(self)
         self.skip_folders_entry.bind("<Return>", lambda e: self.add_skip_folder())
-        self.skip_folders_entry.grid(row=3, column=4, sticky="nwes", rowspan=1, columnspan=2)
+        self.skip_folders_entry.grid(row=3, column=4, sticky="nwe", rowspan=1, columnspan=2)
+        self.grid_rowconfigure(3, weight=0)
 
         skip_add_button = ttk.Button(self, text="Add folder", padding=[8, 2], command=self.add_skip_folder)
         skip_add_button.grid(row=4, column=4, sticky="nw", columnspan=1)
