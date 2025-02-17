@@ -6,8 +6,8 @@ from functools import partial
 import os
 
 class InputFrame(ttk.Frame):
-    def __init__(self, master) -> None:
-        super().__init__(master, borderwidth=1, relief="solid", padding=[8, 12])
+    def __init__(self, master, *args, **kwargs) -> None:
+        super().__init__(master, *args, **kwargs, borderwidth=1, relief="solid", padding=[8, 12])
         self.grid(row=0, column=0, columnspan=6, rowspan=1, sticky="nsew", padx=10, pady=10)
 
         for c in range(6): self.columnconfigure(index=c, weight=1)
