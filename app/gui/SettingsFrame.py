@@ -31,38 +31,38 @@ class SettingsFrame(ttk.Frame):
         label = ttk.Label(self, text="Image settings", justify="center", borderwidth=2, relief="ridge", anchor="center")
         label.grid(row=0, column=0, columnspan=2, sticky="nsew")
         
-        self.label_quality = ttk.Label(self, text="Quality:", borderwidth=2, relief="ridge", anchor="w", justify="left")
-        self.label_quality.grid(row=1, column=0, columnspan=2, sticky="nsew")
+        label_quality = ttk.Label(self, text="Quality:", borderwidth=2, relief="ridge", anchor="w", justify="left")
+        label_quality.grid(row=1, column=0, columnspan=2, sticky="nsew")
 
-        self.label_maxwidth_image = ttk.Label(self, text="Max width:", borderwidth=2, relief="ridge", anchor="w", justify="left")
-        self.label_maxwidth_image.grid(row=2, column=0, columnspan=2, sticky="nsew")
+        label_maxwidth_image = ttk.Label(self, text="Max width:", borderwidth=2, relief="ridge", anchor="w", justify="left")
+        label_maxwidth_image.grid(row=2, column=0, columnspan=2, sticky="nsew")
 
-        self.label_maxheight_image = ttk.Label(self, text="Max height:", borderwidth=2, relief="ridge", anchor="w", justify="left")
-        self.label_maxheight_image.grid(row=3, column=0, columnspan=2, sticky="nsew")
+        label_maxheight_image = ttk.Label(self, text="Max height:", borderwidth=2, relief="ridge", anchor="w", justify="left")
+        label_maxheight_image.grid(row=3, column=0, columnspan=2, sticky="nsew")
         
-        self.quality = StringVar(value=90) # брать потом из конфига
-        self.check_quality = (self.register(self.change_value), "%P")
-        self.quality.trace_add("write", lambda name, index, mode: self.change_value(self.quality_spinbox, self.label_quality, self.quality, [1, 100], "Quality"))
+        self.img_quality = StringVar(value=90) # брать потом из конфига
+        self.img_quality.trace_add("write", lambda name, index, mode: self.change_value(self.quality_spinbox, label_quality, self.img_quality, [1, 100], "Quality"))
         
-        self.quality_spinbox = ttk.Spinbox(self, from_=1, to=100, textvariable=self.quality, validatecommand=self.check_quality)
-        self.quality_spinbox.grid(row=1, column=2, columnspan=1, sticky="nw")
-        self.quality_spinbox.set(90)
+        check_quality = (self.register(self.change_value), "%P")
+        quality_spinbox = ttk.Spinbox(self, from_=1, to=100, textvariable=self.img_quality, validatecommand=check_quality)
+        quality_spinbox.grid(row=1, column=2, columnspan=1, sticky="nw")
+        quality_spinbox.set(90)
 
-        self.maxwidth = StringVar(value=1920) # брать потом из конфига
-        self.check_maxwidth = (self.register(self.change_value), "%P")
-        self.maxwidth.trace_add("write", lambda name, index, mode: self.change_value(self.maxwidth_spinbox, self.label_maxwidth_image, self.maxwidth, [1, 10000], "Max width"))
+        self.img_maxwidth = StringVar(value=1920) # брать потом из конфига
+        self.maxwidth.trace_add("write", lambda name, index, mode: self.change_value(maxwidth_spinbox, label_maxwidth_image, self.img_maxwidth, [1, 10000], "Max width"))
         
-        self.maxwidth_spinbox = ttk.Spinbox(self, from_=1, to=10000, textvariable=self.maxwidth, validatecommand=self.check_maxwidth)
-        self.maxwidth_spinbox.grid(row=2, column=2, columnspan=1, sticky="nw")
-        self.maxwidth_spinbox.set(1920)
+        check_maxwidth = (self.register(self.change_value), "%P")
+        maxwidth_spinbox = ttk.Spinbox(self, from_=1, to=10000, textvariable=self.img_maxwidth, validatecommand=check_maxwidth)
+        maxwidth_spinbox.grid(row=2, column=2, columnspan=1, sticky="nw")
+        maxwidth_spinbox.set(1920)
 
-        self.maxheight = StringVar(value=1080) # брать потом из конфига
-        self.check_maxheight = (self.register(self.change_value), "%P")
-        self.maxheight.trace_add("write", lambda name, index, mode: self.change_value(self.maxheight_spinbox, self.label_maxheight_image, self.maxheight, [1, 10000], "Max height"))
+        self.img_maxheight = StringVar(value=1080) # брать потом из конфига
+        self.img_maxheight.trace_add("write", lambda name, index, mode: self.change_value(maxheight_spinbox, label_maxheight_image, self.img_maxheight, [1, 10000], "Max height"))
 
-        self.maxheight_spinbox = ttk.Spinbox(self, from_=1, to=10000, textvariable=self.maxheight, validatecommand=self.check_maxheight)
-        self.maxheight_spinbox.grid(row=3, column=2, columnspan=1, sticky="nw")
-        self.maxheight_spinbox.set(1080)
+        check_maxheight = (self.register(self.change_value), "%P")
+        maxheight_spinbox = ttk.Spinbox(self, from_=1, to=10000, textvariable=self.img_maxheight, validatecommand=check_maxheight)
+        maxheight_spinbox.grid(row=3, column=2, columnspan=1, sticky="nw")
+        maxheight_spinbox.set(1080)
 
     def create_video_setting(self):
         label = ttk.Label(self, text="Video settings", justify="center", borderwidth=2, relief="ridge", anchor="center")
