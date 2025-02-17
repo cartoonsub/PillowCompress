@@ -26,6 +26,16 @@ class SettingsFrame(ttk.Frame):
         self.video_maxwidth = StringVar(value=1920)
         self.video_maxheight = StringVar(value=1080)
 
+    def get_params(self) -> dict:
+        return {
+            'img_quality': self.img_quality.get(),
+            'img_maxwidth': self.img_maxwidth.get(),
+            'img_maxheight': self.img_maxheight.get(),
+            'video_bitrate': self.video_bitrate.get(),
+            'audio_bitrate': self.audio_bitrate.get(),
+            'video_maxwidth': self.video_maxwidth.get(),
+            'video_maxheight': self.video_maxheight.get(),
+        }
 
     def create_image_settings(self):
         label = ttk.Label(self, text="Image settings", justify="center", borderwidth=2, relief="ridge", anchor="center")

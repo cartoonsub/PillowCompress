@@ -1,8 +1,5 @@
 from tkinter import *
 from tkinter import ttk
-from tkinter import filedialog
-
-import os
 
 
 class Logs(ttk.Frame):
@@ -27,14 +24,17 @@ class Logs(ttk.Frame):
         self.add_test_data()
 
     def create_logs_buttons(self):
-        self.process_button = ttk.Button(self, text='Processing', padding=[8, 2], command=lambda: self.show_widget(self.Processing, self.scrollbar_processing))
-        self.process_button.grid(row=0, column=0, sticky="nsew")
+        process_button = ttk.Button(self, text='Processing', padding=[8, 2], command=lambda: self.show_widget(self.Processing, self.scrollbar_processing))
+        process_button.grid(row=0, column=0, sticky="nsew")
 
-        self.errors_button = ttk.Button(self, text='Errors', padding=[8, 2], command=lambda: self.show_widget(self.Errors, self.scrollbar_errors))
-        self.errors_button.grid(row=0, column=1, sticky="nsew")
+        errors_button = ttk.Button(self, text='Errors', padding=[8, 2], command=lambda: self.show_widget(self.Errors, self.scrollbar_errors))
+        errors_button.grid(row=0, column=1, sticky="nsew")
 
-        self.success_button = ttk.Button(self, text='success', padding=[8, 2], command=lambda: self.show_widget(self.Success, self.scrollbar_success))
-        self.success_button.grid(row=0, column=2, sticky="nsew")
+        success_button = ttk.Button(self, text='success', padding=[8, 2], command=lambda: self.show_widget(self.Success, self.scrollbar_success))
+        success_button.grid(row=0, column=2, sticky="nsew")
+
+        clear_button = ttk.Button(self, text='Clear', padding=[8, 2], command=self.clear_logs)
+        clear_button.grid(row=2, column=0, columnspan=1, sticky="nsew")
 
     def create_listbox_processings(self):
         self.Processing = Listbox(self, selectmode=MULTIPLE, height=6)
@@ -72,8 +72,38 @@ class Logs(ttk.Frame):
         widget.grid()
         scrollbar.grid()
 
+    def clear_logs(self):
+        self.Processing.delete(0, END)
+        self.Errors.delete(0, END)
+        self.Success.delete(0, END)
+
+    def set_logs(self, logs):
+        for type, log in logs.items():
+            if type == 'Processing':
+                class_ = self.Processing
+            elif type == 'Errors':
+                class_ = self.Errors
+            elif type == 'Success':
+                class_ = self.Success
+            else: 
+                print('Error: unknown log type')
+                continue
+
+            for text in log:
+                class_.insert(END, text)
+
     def add_test_data(self):
+        logs = {
+            'Processing': [],
+            'Errors': [],
+            'Success': []
+        }
         for i in range(100):
-            self.Processing.insert(END, f"Processing {i}")
-            self.Errors.insert(END, f"Error {i}")
-            self.Success.insert(END, f"Success {i}")
+            logs['Processing'].append(f"Processing {i}")
+            logs['Errors'].append(f"Error {i}")
+            logs['Success'].append(f"Success {i}")
+
+        self.set_logs(logs)
+
+if __name__ == '__main__':
+    pass

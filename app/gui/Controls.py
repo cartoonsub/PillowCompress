@@ -2,8 +2,6 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
-import os
-
 
 class Controls(ttk.Frame):
     def __init__(self, master, *args, **kwargs):
