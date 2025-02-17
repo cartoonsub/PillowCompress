@@ -28,13 +28,13 @@ class SettingsFrame(ttk.Frame):
 
     def get_params(self) -> dict:
         return {
-            'img_quality': self.img_quality.get(),
-            'img_maxwidth': self.img_maxwidth.get(),
-            'img_maxheight': self.img_maxheight.get(),
-            'video_bitrate': self.video_bitrate.get(),
-            'audio_bitrate': self.audio_bitrate.get(),
-            'video_maxwidth': self.video_maxwidth.get(),
-            'video_maxheight': self.video_maxheight.get(),
+            'img_quality': int(self.img_quality.get()),
+            'img_maxwidth': int(self.img_maxwidth.get()),
+            'img_maxheight': int(self.img_maxheight.get()),
+            'video_bitrate': int(self.video_bitrate.get()),
+            'audio_bitrate': int(self.audio_bitrate.get()),
+            'video_maxwidth': int(self.video_maxwidth.get()),
+            'video_maxheight': int(self.video_maxheight.get()),
         }
 
     def create_image_settings(self):

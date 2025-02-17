@@ -39,7 +39,7 @@ class ImageCompressor:
                 img.save(new_file, optimize=True, quality=self.quality)
 
                 new_file_size = os.path.getsize(new_file) / (1024 * 1024)
-                print(f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB')
+                print(f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB quality: {self.quality}')
             except Exception as e:
                 print(f'Error: {e}')
                 continue

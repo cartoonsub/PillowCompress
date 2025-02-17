@@ -10,15 +10,25 @@ class Compressor:
         
         if 'folder' not in params:
             raise ValueError('Error: folder is required')
-        
+
         self.folder = params['folder']
-        self.quality = params.get('quality', 90)
-        self.new_folder = params.get('new_folder', '')
         self.skip_folders = params.get('skip_folders', [])
-        self.max_sizes_image = params.get('max_sizes_image', {})
-        self.bitrateVideo = params.get('max_bitrate_video', '') #5000k
-        self.bitrateAudio = params.get('max_bitrate_audio', '') #192k
-        self.max_sizes_video = params.get('max_sizes_video', {})
+        self.new_folder = params.get('new_folder', '')
+        
+        img_params = params.get('img_params', {})
+        self.quality = img_params.get('quality', 90)
+        self.max_sizes_image = {
+            'width': img_params.get('maxwidth', 1920),
+            'height': img_params.get('maxheight', 1080)
+        }
+        
+        video_params = params.get('video_params', {})
+        self.bitrateVideo = video_params.get('bitrate', 5000)
+        self.bitrateAudio = video_params.get('audio_bitrate', 192)
+        self.max_sizes_video = {
+            'width': video_params.get('maxwidth', 1920),
+            'height': video_params.get('maxheight', 1080)
+        }
 
     def run(self) -> bool:
         fm = fileManager.FileManager(self.folder, skip_folders=self.skip_folders)
@@ -30,13 +40,13 @@ class Compressor:
         if self.new_folder:
             fm.create_directory(self.new_folder)
 
-        # if 'image' in files:
-        #     imgComp = ImageCompressor.ImageCompressor(files['image'], self.quality, self.new_folder, self.max_sizes_image)
-        #     imgComp.compress_files()
+        if 'image' in files:
+            imgComp = ImageCompressor.ImageCompressor(files['image'], self.quality, self.new_folder, self.max_sizes_image)
+            imgComp.compress_files()
         
-        # if 'video' in files:
-        #     videoComp = VideoCompressor.VideoCompressor(files['video'], self.new_folder, self.bitrateAudio, self.bitrateVideo, self.max_sizes_video)
-        #     videoComp.run()
+        if 'video' in files:
+            videoComp = VideoCompressor.VideoCompressor(files['video'], self.new_folder, self.bitrateAudio, self.bitrateVideo, self.max_sizes_video)
+            videoComp.run()
 
         return True
 
