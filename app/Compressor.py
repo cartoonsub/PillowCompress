@@ -20,23 +20,25 @@ class Compressor:
         self.bitrateAudio = params.get('max_bitrate_audio', '') #192k
         self.max_sizes_video = params.get('max_sizes_video', {})
 
-    def run(self) -> None:
+    def run(self) -> bool:
         fm = fileManager.FileManager(self.folder, skip_folders=self.skip_folders)
         files = fm.get_files()
         if not files:
             print('Error: folder is empty')
-            return
+            return False
         
         if self.new_folder:
             fm.create_directory(self.new_folder)
 
-        if 'image' in files:
-            imgComp = ImageCompressor.ImageCompressor(files['image'], self.quality, self.new_folder, self.max_sizes_image)
-            imgComp.compress_files()
+        # if 'image' in files:
+        #     imgComp = ImageCompressor.ImageCompressor(files['image'], self.quality, self.new_folder, self.max_sizes_image)
+        #     imgComp.compress_files()
         
-        if 'video' in files:
-            videoComp = VideoCompressor.VideoCompressor(files['video'], self.new_folder, self.bitrateAudio, self.bitrateVideo, self.max_sizes_video)
-            videoComp.run()
+        # if 'video' in files:
+        #     videoComp = VideoCompressor.VideoCompressor(files['video'], self.new_folder, self.bitrateAudio, self.bitrateVideo, self.max_sizes_video)
+        #     videoComp.run()
+
+        return True
 
 
 def main():

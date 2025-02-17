@@ -53,10 +53,15 @@ class FileManager:
         result = True
         folderName = os.path.basename(folder)
         for skip_folder in self.skip_folders:
-            if re.search(skip_folder, folderName, re.IGNORECASE):
-                print('Skip:', folder)
-                result = False
-                break
+            try:
+                print('skip_folder:', skip_folder)
+                if re.search(skip_folder, folderName, re.IGNORECASE):
+                    print('Skip:', folder)
+                    result = False
+                    break
+            except re.error as e:
+                print(f'Invalid regex pattern "{skip_folder}": {e}')
+                continue
                 
         return result
 

@@ -24,6 +24,13 @@ class InputFrame(ttk.Frame):
         skip_folders_default = ["Done"] # брать потом из конфига
         self.skip_folders = StringVar(value=skip_folders_default)
 
+    def get_params(self) -> dict:
+        skip_folders_list = self.skip_folders_listbox.get(0, END)
+        return {
+            'folder': self.folder.get(),
+            'skip_folders': [folder for folder in skip_folders_list],
+            'new_folder': self.folder.get() + '/test',
+        }
     def create_folder_input(self) -> None:
         errmsg = StringVar()
 
