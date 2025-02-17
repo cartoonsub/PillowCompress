@@ -37,6 +37,7 @@ class CompressorGui():
         self.logs = Logs(self.root, borderwidth=1, relief="solid", padding=[8, 12])
         
         self.controls = Controls(self.root, borderwidth=1, relief="solid", padding=[8, 12])
+        print(self.input_frame.folder.get())
 
 
 if __name__ == '__main__':

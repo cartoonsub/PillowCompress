@@ -58,6 +58,8 @@ class InputFrame(ttk.Frame):
         return True
 
     def choose_folder(self, errmsg, entry) -> None:
+        entry.delete(0, END)
+        self.folder.set("")
         folder_path = filedialog.askdirectory()
         if not folder_path:
             errmsg.set("Please enter a folder path")
