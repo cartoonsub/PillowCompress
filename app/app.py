@@ -6,6 +6,7 @@ from gui.input_frame import InputFrame
 from gui.SettingsFrame import SettingsFrame
 from gui.Controls import Controls
 from gui.Logs import Logs
+from globals import set_stop_compressing
 
 import os
 import sys
@@ -22,8 +23,7 @@ class CompressorGui():
         self.center_window()
         self.root.resizable(False, False)
         self.root.attributes('-topmost', True)
-        icon_path = os.path.join(os.path.dirname(__file__), 'assets/favicon.ico')
-        self.root.iconbitmap(default=icon_path)
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         if hasattr(sys, '_MEIPASS'):
             icon_path = os.path.join(sys._MEIPASS, 'assets/favicon.ico')
@@ -47,6 +47,10 @@ class CompressorGui():
         logs = Logs(self.root)
 
         Controls(self.root, input_frame=input_frame, settings_frame=settings_frame, logs=logs)
+
+    def on_closing(self):
+        set_stop_compressing(True)
+        self.root.destroy()
 
 
 if __name__ == '__main__':
