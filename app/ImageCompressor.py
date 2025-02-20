@@ -1,5 +1,7 @@
+from globals import check_gui_controls
 from PIL import Image
 import os
+import time
 
 
 class ImageCompressor:
@@ -16,6 +18,9 @@ class ImageCompressor:
 
     def compress_files(self):
         for file in self.files:
+            if not check_gui_controls():
+                return
+
             try:
                 img = Image.open(file)
                 
