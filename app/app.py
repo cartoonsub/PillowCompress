@@ -50,7 +50,8 @@ class CompressorGui():
 
     def on_closing(self):
         set_stop_compressing(True)
-        self.root.destroy()
+        # self.root.destroy()
+        sys.exit()
 
 
 if __name__ == '__main__':
