@@ -7,6 +7,9 @@ from gui.SettingsFrame import SettingsFrame
 from gui.Controls import Controls
 from gui.Logs import Logs
 
+import os
+import sys
+
 class CompressorGui():
     def __init__(self):
         self.init_gui()
@@ -19,7 +22,14 @@ class CompressorGui():
         self.center_window()
         self.root.resizable(False, False)
         self.root.attributes('-topmost', True)
-        self.root.iconbitmap(default="app/assets/favicon.ico")
+        icon_path = os.path.join(os.path.dirname(__file__), 'assets/favicon.ico')
+        self.root.iconbitmap(default=icon_path)
+
+        if hasattr(sys, '_MEIPASS'):
+            icon_path = os.path.join(sys._MEIPASS, 'assets/favicon.ico')
+        else:
+            icon_path = os.path.join(os.path.dirname(__file__), 'assets/favicon.ico')
+        self.root.iconbitmap(default=icon_path)
 
     def center_window(self):
         screen_width = self.root.winfo_screenwidth()
@@ -40,4 +50,11 @@ class CompressorGui():
 
 
 if __name__ == '__main__':
-    CompressorGui()
+    try:
+        CompressorGui()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        input("Press Enter to exit...")
+
+    # pyinstaller --onefile --noconsole --add-data "assets/favicon.ico;assets" app.py
+    # pyinstaller --onefile --console --add-data "assets/favicon.ico;assets" app.py

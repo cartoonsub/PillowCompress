@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkinter import filedialog
 
 from Compressor import Compressor
+import threading
 
 class Controls(ttk.Frame):
     def __init__(self, master, input_frame, settings_frame, logs, *args, **kwargs):
@@ -10,6 +11,7 @@ class Controls(ttk.Frame):
         self.input_frame = input_frame
         self.settings_frame = settings_frame
         self.logs = logs
+        self.is_compressing = False
 
         self.init_gui()
         self.create_control_buttons()
@@ -31,23 +33,48 @@ class Controls(ttk.Frame):
         self.pause_button = ttk.Button(self, text='PAUSE', padding=[8, 2], style='W.TButton')
         self.pause_button.grid(row=0, column=1, sticky="nsew")
 
-        self.stop_button = ttk.Button(self, text='STOP', padding=[8, 2], style='W.TButton', command=self.reset_button)
+        self.stop_button = ttk.Button(self, text='STOP', padding=[8, 2], style='W.TButton', command=self.stop_compress)
         self.stop_button.grid(row=0, column=2, sticky="nsew")
 
     def start_compress(self):
+        if self.is_compressing:
+            print('Already compressing...')
+            return
+
         self.start_button.config(state=DISABLED)
         self.start_button.configure(text='Preparing...', style='G.TButton')
         
         params = self.get_params()
-        self.start_button.configure(text='Compressing...', style='G.TButton')
 
-        result = Compressor(params).run()
-        if result:
-            self.start_button.configure(text='DONE/RESTART', style='G.TButton')
+        def compress():
+            print('Начинаем работу...')
+            self.is_compressing = True
+            self.start_button.configure(text='Compressing...', style='G.TButton')
+            result = Compressor(params).run()
+            if result:
+                self.start_button.configure(text='DONE/RESTART', style='G.TButton')
+            else:
+                self.start_button.configure(text='ERROR/RESTART', style='G.TButton')
+            self.start_button.config(state=NORMAL)
+            self.is_compressing = False
+
+        self.thread = threading.Thread(target=compress)
+        self.thread.start()
+        print('Продолжаем работу...')
+
+    def stop_compress(self):
+        self.stop_thread = True
+        self.check_thread_status()
+
+    def check_thread_status(self):
+        if self.thread.is_alive():
+            print('Stopping...')
+            self.after(100, self.check_thread_status)
         else:
-            self.start_button.configure(text='ERROR/RESTART', style='G.TButton')
+            print('Stopped...')
+            self.reset_start_button()
 
-    def reset_button(self):
+    def reset_start_button(self):
         self.start_button.config(state=NORMAL)
         self.start_button.configure(text='START', style='W.TButton')
 

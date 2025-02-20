@@ -48,6 +48,7 @@ class Compressor:
             videoComp = VideoCompressor.VideoCompressor(files['video'], self.new_folder, self.bitrateAudio, self.bitrateVideo, self.max_sizes_video)
             videoComp.run()
 
+        print('Compression is done')
         return True
 
 
