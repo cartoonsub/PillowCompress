@@ -22,7 +22,7 @@ class CompressorGui:
         self.root.title("Compressor")
         self.center_window()
         self.root.resizable(False, False)
-        self.root.attributes('-topmost', True)
+        self.root.attributes('-topmost', False)
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         if hasattr(sys, '_MEIPASS'):
