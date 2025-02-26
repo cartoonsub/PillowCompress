@@ -1,3 +1,6 @@
+from globals import check_gui_controls
+from logsBridge import set_logs
+
 import os
 import subprocess
 import json
@@ -24,6 +27,7 @@ class VideoCompressor:
         self.filter_files()
         if not self.files:
             print('After filtering: files is empty')
+            set_logs('error', 'After filtering video: files is empty')
             return
         self.compress_files()
 
@@ -36,11 +40,13 @@ class VideoCompressor:
             info = self.get_video_info(file)
             if not info:
                 print('Error: info is empty')
+                set_logs('error', 'Error: info is empty for ' + file)
                 continue
 
             format = info.get('format', {})
             if not format:
                 print('Error: format is empty')
+                set_logs('error', 'Error: format is empty for ' + file)
                 continue
 
             flag = False
@@ -53,6 +59,7 @@ class VideoCompressor:
             
             if not flag:
                 print('Error: format is not supported', file)
+                set_logs('error', 'Error: format is not supported ' + file)
                 self.files.pop(index)
 
     def get_video_info(self, file: str) -> dict:
@@ -62,6 +69,7 @@ class VideoCompressor:
         popen = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = popen.communicate()
         if popen.returncode != 0:
+            set_logs('error', f'Error running ffprobe on {file}: {err.decode("utf-8")}')
             raise Exception(f'Error running ffprobe on {file}: {err.decode("utf-8")}')
 
         return json.loads(out.decode('utf-8'))
@@ -69,6 +77,10 @@ class VideoCompressor:
 
     def compress_files(self):
         for file in self.files:
+            if not check_gui_controls():
+                return
+
+            set_logs('processing', 'Compressing: ' + file)
             print('Compressing:', file)
 
             info = self.get_video_info(file)
@@ -92,12 +104,14 @@ class VideoCompressor:
             process = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = process.communicate()
             if process.returncode != 0:
+                set_logs('error', f'Error during first pass: {stderr.decode()} for {file}')
                 print(f'Error during first pass: {stderr.decode()}')
                 return
 
             if not os.path.exists('NULL'):
                 self.remove_garbage()
                 print('Error: NULL file is not created')
+                set_logs('error', 'Error: NULL file is not created for ' + file)
                 return
 
             outName = '"' + new_file + '"'
@@ -109,15 +123,18 @@ class VideoCompressor:
             stdout, stderr = process.communicate()
             if process.returncode != 0:
                 print(f'Error during first pass: {stderr.decode()}')
+                set_logs('error', f'Error during first pass: {stderr.decode()} for {file}')
                 return
             
             if not os.path.exists(new_file):
                 print('Error: compressed file is not created')
+                set_logs('error', 'Error: compressed file is not created for ' + file)
                 self.remove_garbage()
                 return
             
             new_file_size = os.path.getsize(new_file) / (1024 * 1024)
             print(f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB')
+            set_logs('done', f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB')
 
             self.remove_garbage()
 

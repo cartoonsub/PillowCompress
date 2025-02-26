@@ -2,6 +2,7 @@ from globals import check_gui_controls
 from PIL import Image
 import os
 import time
+from logsBridge import set_logs
 
 
 class ImageCompressor:
@@ -28,6 +29,7 @@ class ImageCompressor:
                     width, height = img.size
                     if not width or not height:
                         print(f'Error: size is empty {file}')
+                        set_logs('error', f'size is empty {file}')
                         continue
 
                     newWidth, newHeight = self.get_new_size(width, height)
@@ -45,6 +47,7 @@ class ImageCompressor:
 
                 new_file_size = os.path.getsize(new_file) / (1024 * 1024)
                 print(f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB quality: {self.quality}')
+                set_logs('done', f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB quality: {self.quality}')
             except Exception as e:
                 print(f'Error: {e}')
                 continue

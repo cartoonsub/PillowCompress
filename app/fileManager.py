@@ -2,6 +2,7 @@ import os
 import re
 import re
 import mimetypes
+from logsBridge import set_logs
 
 class FileManager:
     def __init__(self, folder: str, dest: str = '', skip_folders: list = []):
@@ -9,6 +10,8 @@ class FileManager:
         self.dest = dest
         self.skip_folders = skip_folders
         print('folder:', folder)
+        set_logs('processing', 'Start scanning folder: ' + folder)
+
         if not self.dest:
             self.dest = self.folder
 
@@ -28,6 +31,7 @@ class FileManager:
         files_list = {}
         if not os.path.isdir(self.folder):
             print('Error: folder does not exist')
+            set_logs('error', 'Folder does not exist: ' + self.folder)
             return files_list
 
         os.chdir(self.folder)
@@ -35,6 +39,7 @@ class FileManager:
         for root, dirs, files in os.walk(current_dir):
             if not self.is_allowed_folder(root):
                 print('Skip:', root)
+                set_logs('processing', 'Skip folder: ' + root)
                 continue
 
             if not files:
@@ -54,13 +59,13 @@ class FileManager:
         folderName = os.path.basename(folder)
         for skip_folder in self.skip_folders:
             try:
-                print('skip_folder:', skip_folder)
-                if re.search(skip_folder, folderName, re.IGNORECASE):
+                if re.search(skip_folder, folder, re.IGNORECASE):
                     print('Skip:', folder)
                     result = False
                     break
             except re.error as e:
                 print(f'Invalid regex pattern "{skip_folder}": {e}')
+                set_logs('error', f'Invalid regex pattern "{skip_folder}": {e}')
                 continue
                 
         return result
@@ -82,12 +87,15 @@ class FileManager:
     def create_directory(self, folder: str):
         if not folder:
             print('Error: folder name is empty')
+            set_logs('error', 'Folder name is empty')
             return
         if not os.path.exists(folder):
             os.makedirs(folder)
             print(f'Directory {folder} created')
+            set_logs('processing', f'Directory {folder} created')
         else:
             print(f'Directory {folder} already exists')
+            set_logs('processing', f'Directory {folder} already exists')
 
 
 if __name__ == '__main__':

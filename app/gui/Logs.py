@@ -1,6 +1,8 @@
 from tkinter import *
 from tkinter import ttk
 
+from logsBridge import get_logs
+from globals import is_compressing
 
 class Logs(ttk.Frame):
     def __init__(self, master, *args, **kwargs):
@@ -21,7 +23,7 @@ class Logs(ttk.Frame):
         self.scrollbar_errors.grid_remove()
         self.scrollbar_success.grid_remove()
 
-        self.add_test_data()
+        self.start_listening()
 
     def create_logs_buttons(self):
         process_button = ttk.Button(self, text='Processing', padding=[8, 2], command=lambda: self.show_widget(self.Processing, self.scrollbar_processing))
@@ -79,11 +81,11 @@ class Logs(ttk.Frame):
 
     def set_logs(self, logs):
         for type, log in logs.items():
-            if type == 'Processing':
+            if type == 'processing':
                 class_ = self.Processing
-            elif type == 'Errors':
+            elif type == 'error':
                 class_ = self.Errors
-            elif type == 'Success':
+            elif type == 'done':
                 class_ = self.Success
             else: 
                 print('Error: unknown log type')
@@ -94,16 +96,22 @@ class Logs(ttk.Frame):
 
     def add_test_data(self):
         logs = {
-            'Processing': [],
-            'Errors': [],
-            'Success': []
+            'processing': [],
+            'error': [],
+            'done': []
         }
         for i in range(100):
-            logs['Processing'].append(f"Processing {i}")
-            logs['Errors'].append(f"Error {i}")
-            logs['Success'].append(f"Success {i}")
+            logs['processing'].append(f"Processing {i}")
+            logs['error'].append(f"Error {i}")
+            logs['done'].append(f"Success {i}")
 
         self.set_logs(logs)
+
+    def start_listening(self):
+        current_logs = get_logs()
+        if current_logs:
+            self.set_logs(current_logs)
+        self.after(1000, self.start_listening)
 
 if __name__ == '__main__':
     pass

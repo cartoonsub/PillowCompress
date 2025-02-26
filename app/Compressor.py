@@ -1,7 +1,7 @@
 import fileManager
 import ImageCompressor
 import VideoCompressor
-
+from logsBridge import set_logs
 
 class Compressor:
     def __init__(self, params: dict) -> None:
@@ -35,19 +35,23 @@ class Compressor:
         files = fm.get_files()
         if not files:
             print('Error: folder is empty')
+            set_logs('error', 'folder is empty: ' + self.folder)
             return False
         
         if self.new_folder:
             fm.create_directory(self.new_folder)
 
         if 'image' in files:
+            set_logs('processing', 'Start compressing images...')
             imgComp = ImageCompressor.ImageCompressor(files['image'], self.quality, self.new_folder, self.max_sizes_image)
             imgComp.compress_files()
         
         if 'video' in files:
+            set_logs('processing', 'Start compressing videos...')
             videoComp = VideoCompressor.VideoCompressor(files['video'], self.new_folder, self.bitrateAudio, self.bitrateVideo, self.max_sizes_video)
             videoComp.run()
 
+        set_logs('done', 'Compression is done')
         print('Compression is done')
         return True
 

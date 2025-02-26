@@ -4,7 +4,7 @@ from tkinter import filedialog
 
 from Compressor import Compressor
 import threading
-from globals import set_stop_compressing, set_pause_compressing
+from globals import set_stop_compressing, set_pause_compressing, set_is_compressing, is_compressing
 
 class Controls(ttk.Frame):
     def __init__(self, master, input_frame, settings_frame, logs, *args, **kwargs):
@@ -12,7 +12,6 @@ class Controls(ttk.Frame):
         self.input_frame = input_frame
         self.settings_frame = settings_frame
         self.logs = logs
-        self.is_compressing = False
 
         self.init_gui()
         self.create_control_buttons()
@@ -41,7 +40,7 @@ class Controls(ttk.Frame):
     def start_compress(self):
         set_stop_compressing(False)
         set_pause_compressing(False)
-        if self.is_compressing:
+        if is_compressing:
             self.buttons_switch('start_processing')
             return
 
@@ -49,7 +48,7 @@ class Controls(ttk.Frame):
 
 
         def compress():
-            self.is_compressing = True
+            set_is_compressing(True)
             params = self.get_params()
             result = Compressor(params).run()
     
@@ -58,7 +57,7 @@ class Controls(ttk.Frame):
             else:
                 self.buttons_switch('error', styleType='R.TButton')
             self.start_button.config(state=NORMAL)
-            self.is_compressing = False
+            set_is_compressing(False)
 
         self.thread = threading.Thread(target=compress)
         self.thread.start()
