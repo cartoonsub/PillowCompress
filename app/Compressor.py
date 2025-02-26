@@ -61,6 +61,7 @@ class Compressor:
 
 
 def main():
+    # not actual params
     params = {
         'folder': 'C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/asia/море пхукет',
         'skip_folders': [

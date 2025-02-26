@@ -10,18 +10,18 @@ class InputFrame(ttk.Frame):
         super().__init__(master, *args, **kwargs, borderwidth=1, relief="solid", padding=[8, 12])
         self.grid(row=0, column=0, columnspan=6, rowspan=1, sticky="nsew", padx=10, pady=10)
 
-        for c in range(6): self.columnconfigure(index=c, weight=1)
-        for r in range(6): self.rowconfigure(index=r, weight=1)
+        for c in range(6):
+            self.columnconfigure(index=c, weight=1)
+        for r in range(6):
+            self.rowconfigure(index=r, weight=1)
 
         self.init_params()
-
         self.create_folder_input()
         self.create_listbox()
 
     def init_params(self) -> None:
         self.folder = StringVar()
-
-        skip_folders_default = ["Done"] # брать потом из конфига
+        skip_folders_default = ["Done"]  # брать потом из конфига
         self.skip_folders = StringVar(value=skip_folders_default)
 
     def get_params(self) -> dict:
@@ -31,6 +31,7 @@ class InputFrame(ttk.Frame):
             'skip_folders': [folder for folder in skip_folders_list],
             'new_folder': self.folder.get() + '/test',
         }
+
     def create_folder_input(self) -> None:
         errmsg = StringVar()
 
@@ -84,7 +85,6 @@ class InputFrame(ttk.Frame):
         self.skip_folders_listbox = Listbox(self, listvariable=self.skip_folders, height=5, yscrollcommand=True)
         self.skip_folders_listbox.grid(row=3, column=0, sticky="nwes", columnspan=4, rowspan=2)
 
-
         self.skip_folders_entry = ttk.Entry(self)
         self.skip_folders_entry.bind("<Return>", lambda e: self.add_skip_folder())
         self.skip_folders_entry.grid(row=3, column=4, sticky="nwe", rowspan=1, columnspan=2)
@@ -109,7 +109,3 @@ class InputFrame(ttk.Frame):
             return
         self.skip_folders_listbox.insert(0, new_skip_folder)
         self.skip_folders_entry.delete(0, END)
-
-
-if __name__ == '__main__':
-    pass

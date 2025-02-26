@@ -7,11 +7,12 @@ from globals import is_compressing
 class Logs(ttk.Frame):
     def __init__(self, master, *args, **kwargs):
         super().__init__(master, *args, **kwargs, borderwidth=1, relief="solid", padding=[8, 12])
-        self.grid(row=3, column=0, columnspan=6, rowspan=1,
-                  sticky="nsew", padx=10, pady=10)
+        self.grid(row=3, column=0, columnspan=6, rowspan=1, sticky="nsew", padx=10, pady=10)
 
-        for c in range(3): self.columnconfigure(index=c, weight=1)
-        for r in range(2): self.rowconfigure(index=r, weight=1)
+        for c in range(3):
+            self.columnconfigure(index=c, weight=1)
+        for r in range(2):
+            self.rowconfigure(index=r, weight=1)
 
         self.create_logs_buttons()
         self.create_listbox_processings()
@@ -32,7 +33,7 @@ class Logs(ttk.Frame):
         errors_button = ttk.Button(self, text='Errors', padding=[8, 2], command=lambda: self.show_widget(self.Errors, self.scrollbar_errors))
         errors_button.grid(row=0, column=1, sticky="nsew")
 
-        success_button = ttk.Button(self, text='success', padding=[8, 2], command=lambda: self.show_widget(self.Success, self.scrollbar_success))
+        success_button = ttk.Button(self, text='Success', padding=[8, 2], command=lambda: self.show_widget(self.Success, self.scrollbar_success))
         success_button.grid(row=0, column=2, sticky="nsew")
 
         clear_button = ttk.Button(self, text='Clear', padding=[8, 2], command=self.clear_logs)
@@ -80,19 +81,19 @@ class Logs(ttk.Frame):
         self.Success.delete(0, END)
 
     def set_logs(self, logs):
-        for type, log in logs.items():
-            if type == 'processing':
-                class_ = self.Processing
-            elif type == 'error':
-                class_ = self.Errors
-            elif type == 'done':
-                class_ = self.Success
-            else: 
+        for log_type, log in logs.items():
+            if log_type == 'processing':
+                listbox = self.Processing
+            elif log_type == 'error':
+                listbox = self.Errors
+            elif log_type == 'done':
+                listbox = self.Success
+            else:
                 print('Error: unknown log type')
                 continue
 
             for text in log:
-                class_.insert(END, text)
+                listbox.insert(END, text)
 
     def add_test_data(self):
         logs = {
@@ -113,5 +114,3 @@ class Logs(ttk.Frame):
             self.set_logs(current_logs)
         self.after(1000, self.start_listening)
 
-if __name__ == '__main__':
-    pass

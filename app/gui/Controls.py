@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import ttk
-from tkinter import filedialog
 
 from Compressor import Compressor
 import threading
@@ -45,7 +44,6 @@ class Controls(ttk.Frame):
             return
 
         self.buttons_switch('start')
-
 
         def compress():
             set_is_compressing(True)
@@ -143,6 +141,3 @@ class Controls(ttk.Frame):
         }
 
         return params
-
-if __name__ == '__main__':
-    pass
