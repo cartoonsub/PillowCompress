@@ -1,27 +1,33 @@
-from globals import check_gui_controls
-from logsBridge import set_logs
-
 import os
 import subprocess
 import json
 
+from globals import check_gui_controls
+from logsBridge import set_logs
+
 
 class VideoCompressor:
+    """
+    A class to compress video files using ffmpeg.
+    """
+
     def __init__(
             self, files: list,
             dest: str = '',
-            bitrateAudio: str = '',
-            bitrateVideo: int = '',
-            max_sizes: dict = {}
+            bitrate_audio: str = '',
+            bitrate_video: int = 0,
+            max_sizes: dict = None
     ) -> None:
         self.ffmpeg = 'C:/ffmpeg/bin/ffmpeg.exe'
-        self.extensions = ('mp4', 'mkv', 'avi', 'flv', 'mov', 'wmv', 'mpg', 'mpeg', 'm4v', '3gp', '3g2', 'm2ts', 'mts', 'ts', 'webm')
-        self
+        self.extensions = (
+            'mp4', 'mkv', 'avi', 'flv', 'mov', 'wmv', 'mpg', 'mpeg', 'm4v',
+            '3gp', '3g2', 'm2ts', 'mts', 'ts', 'webm'
+        )
         self.files = files
         self.dest = dest
-        self.bitrateAudio = bitrateAudio
-        self.bitrateVideo = bitrateVideo
-        self.max_sizes = max_sizes
+        self.bitrate_audio = bitrate_audio
+        self.bitrate_video = bitrate_video
+        self.max_sizes = max_sizes if max_sizes else {}
 
     def run(self) -> None:
         self.filter_files()
@@ -36,7 +42,7 @@ class VideoCompressor:
             file = str(file)
             if not file.lower().endswith(self.extensions):
                 continue
-            
+
             info = self.get_video_info(file)
             if not info:
                 print('Error: info is empty')
@@ -52,11 +58,11 @@ class VideoCompressor:
             flag = False
             format_name = format.get('format_name', '')
             formats = format_name.split(',')
-            for format in formats:
-                if format in self.extensions:
+            for fmt in formats:
+                if fmt in self.extensions:
                     flag = True
                     break
-            
+
             if not flag:
                 print('Error: format is not supported', file)
                 set_logs('error', 'Error: format is not supported ' + file)
@@ -74,8 +80,7 @@ class VideoCompressor:
 
         return json.loads(out.decode('utf-8'))
 
-
-    def compress_files(self):
+    def compress_files(self) -> None:
         for file in self.files:
             if not check_gui_controls():
                 return
@@ -97,10 +102,10 @@ class VideoCompressor:
                 new_file = file
 
             path = '"' + file + '"'
-            startQuery = self.ffmpeg + ' -y -i ' + path
+            start_query = self.ffmpeg + ' -y -i ' + path
 
             codec = 'libx264'
-            query = startQuery + ' -c:v ' + codec + ' -b:v ' + bitrate + ' -pass 1 -f mp4 NULL' # NULL
+            query = start_query + ' -c:v ' + codec + ' -b:v ' + bitrate + ' -pass 1 -f mp4 NULL'
             process = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = process.communicate()
             if process.returncode != 0:
@@ -114,24 +119,23 @@ class VideoCompressor:
                 set_logs('error', 'Error: NULL file is not created for ' + file)
                 return
 
-            outName = '"' + new_file + '"'
-            query = ''
-            query = startQuery + ' -map 0:0'
-            query = startQuery + ' -c:v libx264 -b:v ' + bitrate + ' -pass 2 -c:a aac -b:a ' + bitrate_audio + ' -f mp4 -movflags +faststart -vsync 1 -async 1 ' + outName
+            out_name = '"' + new_file + '"'
+            query = start_query + ' -map 0:0'
+            query += ' -c:v libx264 -b:v ' + bitrate + ' -pass 2 -c:a aac -b:a ' + bitrate_audio + ' -f mp4 -movflags +faststart -vsync 1 -async 1 ' + out_name
 
             process = subprocess.Popen(query, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = process.communicate()
             if process.returncode != 0:
-                print(f'Error during first pass: {stderr.decode()}')
-                set_logs('error', f'Error during first pass: {stderr.decode()} for {file}')
+                print(f'Error during second pass: {stderr.decode()}')
+                set_logs('error', f'Error during second pass: {stderr.decode()} for {file}')
                 return
-            
+
             if not os.path.exists(new_file):
                 print('Error: compressed file is not created')
                 set_logs('error', 'Error: compressed file is not created for ' + file)
                 self.remove_garbage()
                 return
-            
+
             new_file_size = os.path.getsize(new_file) / (1024 * 1024)
             print(f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB')
             set_logs('done', f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB')
@@ -141,7 +145,7 @@ class VideoCompressor:
     def get_video_bitrate(self, info: dict) -> int:
         bitrate = 0
         if not info:
-            return self.bitrateVideo
+            return self.bitrate_video
 
         streams = info.get('streams', [])
         for stream in streams:
@@ -150,8 +154,8 @@ class VideoCompressor:
                 bitrate = int(bitrate / 1000)
                 break
 
-        if self.bitrateVideo < bitrate:
-            bitrate = self.bitrateVideo
+        if self.bitrate_video < bitrate:
+            bitrate = self.bitrate_video
 
         return bitrate
 
@@ -160,7 +164,6 @@ class VideoCompressor:
         if not info:
             return bitrate
 
-        # может быть несколько аудиодорожек
         streams = info.get('streams', [])
         for stream in streams:
             if stream.get('codec_type', '') == 'audio':
@@ -202,15 +205,15 @@ class VideoCompressor:
 
         return new_width, new_height
 
-    def remove_garbage(self):
+    def remove_garbage(self) -> None:
         if os.path.exists('NULL'):
             os.remove('NULL')
-        
+
         files = os.listdir('.')
         for file in files:
             if file.endswith('.log'):
                 os.remove(file)
-            
+
             if file.endswith('.mbtree'):
                 os.remove(file)
 
