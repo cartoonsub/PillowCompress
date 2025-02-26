@@ -11,7 +11,7 @@ from globals import set_stop_compressing
 import os
 import sys
 
-class CompressorGui():
+class CompressorGui:
     def __init__(self):
         self.init_gui()
         self.set_frames()
@@ -39,8 +39,10 @@ class CompressorGui():
         self.root.geometry(f"800x700+{x}+{y}")
 
     def set_frames(self):
-        for c in range(6): self.root.columnconfigure(index=c, weight=1)
-        for r in range(6): self.root.rowconfigure(index=r, weight=1)
+        for c in range(6):
+            self.root.columnconfigure(index=c, weight=1)
+        for r in range(6):
+            self.root.rowconfigure(index=r, weight=1)
 
         input_frame = InputFrame(self.root)
         settings_frame = SettingsFrame(self.root)
@@ -50,9 +52,7 @@ class CompressorGui():
 
     def on_closing(self):
         set_stop_compressing(True)
-        # self.root.destroy()
         sys.exit()
-
 
 if __name__ == '__main__':
     try:

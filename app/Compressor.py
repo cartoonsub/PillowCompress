@@ -43,12 +43,16 @@ class Compressor:
 
         if 'image' in files:
             set_logs('processing', 'Start compressing images...')
-            imgComp = ImageCompressor.ImageCompressor(files['image'], self.quality, self.new_folder, self.max_sizes_image)
+            imgComp = ImageCompressor.ImageCompressor(
+                files['image'], self.quality, self.new_folder, self.max_sizes_image
+            )
             imgComp.compress_files()
         
         if 'video' in files:
             set_logs('processing', 'Start compressing videos...')
-            videoComp = VideoCompressor.VideoCompressor(files['video'], self.new_folder, self.bitrateAudio, self.bitrateVideo, self.max_sizes_video)
+            videoComp = VideoCompressor.VideoCompressor(
+                files['video'], self.new_folder, self.bitrateAudio, self.bitrateVideo, self.max_sizes_video
+            )
             videoComp.run()
 
         set_logs('done', 'Compression is done')
@@ -59,7 +63,6 @@ class Compressor:
 def main():
     params = {
         'folder': 'C:/Users/tseri/YandexDisk/фото/mi11tt2024/Camera/asia/море пхукет',
-        # 'folder': 'C:/Users/tseri/Videos/test',
         'skip_folders': [
             r'done',
         ],

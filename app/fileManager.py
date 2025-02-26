@@ -1,6 +1,5 @@
 import os
 import re
-import re
 import mimetypes
 from logsBridge import set_logs
 
@@ -56,7 +55,7 @@ class FileManager:
     
     def is_allowed_folder(self, folder: str) -> bool:
         result = True
-        folderName = os.path.basename(folder)
+        folder_name = os.path.basename(folder)
         for skip_folder in self.skip_folders:
             try:
                 if re.search(skip_folder, folder, re.IGNORECASE):
@@ -96,7 +95,3 @@ class FileManager:
         else:
             print(f'Directory {folder} already exists')
             set_logs('processing', f'Directory {folder} already exists')
-
-
-if __name__ == '__main__':
-    pass

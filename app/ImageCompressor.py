@@ -1,7 +1,6 @@
-from globals import check_gui_controls
-from PIL import Image
 import os
-import time
+from PIL import Image
+from globals import check_gui_controls
 from logsBridge import set_logs
 
 
@@ -24,7 +23,7 @@ class ImageCompressor:
 
             try:
                 img = Image.open(file)
-                
+
                 if self.max_sizes:
                     width, height = img.size
                     if not width or not height:
@@ -32,8 +31,8 @@ class ImageCompressor:
                         set_logs('error', f'size is empty {file}')
                         continue
 
-                    newWidth, newHeight = self.get_new_size(width, height)
-                    img = img.resize((newWidth, newHeight))
+                    new_width, new_height = self.get_new_size(width, height)
+                    img = img.resize((new_width, new_height))
 
                 file_name = os.path.basename(file)
                 file_size = os.path.getsize(file) / (1024 * 1024)
@@ -46,8 +45,10 @@ class ImageCompressor:
                 img.save(new_file, optimize=True, quality=self.quality)
 
                 new_file_size = os.path.getsize(new_file) / (1024 * 1024)
-                print(f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB quality: {self.quality}')
-                set_logs('done', f'Compressed: {file_name} size: {file_size:.2f} MB -> {new_file_size:.2f} MB quality: {self.quality}')
+                print(f'Compressed: {file_name} size: {file_size:.2f} MB -> '
+                      f'{new_file_size:.2f} MB quality: {self.quality}')
+                set_logs('done', f'Compressed: {file_name} size: {file_size:.2f} MB -> '
+                                 f'{new_file_size:.2f} MB quality: {self.quality}')
             except Exception as e:
                 print(f'Error: {e}')
                 continue
@@ -84,6 +85,3 @@ class ImageCompressor:
 
         return new_width, new_height
 
-
-if __name__ == '__main__':
-    pass

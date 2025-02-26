@@ -6,25 +6,28 @@ logs = {
     'done': []
 }
 
-def set_logs(type: str, value: str) -> None:
-    if type not in logs:
+stop_compressing = False
+pause_compressing = False
+
+def set_logs(log_type: str, value: str) -> None:
+    if log_type not in logs:
         print('Error: unknown log type')
         return
 
-    logs[type].append(value)
+    logs[log_type].append(value)
 
-def get_logs(type: str = None) -> dict:
+def get_logs(log_type: str = None) -> dict:
     current_logs = {}
     for key, value in logs.items():
         current_logs[key] = value.copy()
         logs[key].clear()
-    if not type:
+    if not log_type:
         return current_logs
 
-    if type not in current_logs:
+    if log_type not in current_logs:
         print('Error: unknown log type')
         return {}
-    return current_logs[type]
+    return current_logs[log_type]
 
 def check_gui_controls() -> bool:
     if stop_compressing:
