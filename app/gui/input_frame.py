@@ -17,10 +17,12 @@ class InputFrame(ttk.Frame):
 
         self.init_params()
         self.create_folder_input()
+        self.create_new_folder_input()
         self.create_listbox()
 
     def init_params(self) -> None:
         self.folder = StringVar()
+        self.new_folder = StringVar()
         skip_folders_default = ["Done"]  # брать потом из конфига
         self.skip_folders = StringVar(value=skip_folders_default)
 
@@ -29,7 +31,7 @@ class InputFrame(ttk.Frame):
         return {
             'folder': self.folder.get(),
             'skip_folders': [folder for folder in skip_folders_list],
-            'new_folder': self.folder.get() + '/test',
+            'new_folder': self.new_folder.get(),
         }
 
     def create_folder_input(self) -> None:
@@ -43,12 +45,30 @@ class InputFrame(ttk.Frame):
 
         checker = self.register(partial(self.is_valid_folder, error_label=error_label, errmsg=errmsg))
         folder_entry = ttk.Entry(self, validate="all", validatecommand=(checker, "%P"), textvariable=self.folder)
-        folder_entry.grid(row=1, column=0, columnspan=4, sticky="ew")
+        folder_entry.grid(row=1, column=0, columnspan=2, sticky="ew")
 
         self.folder.trace_add("write", lambda name, index, mode: self.is_valid_folder(self.folder.get(), error_label, errmsg))
 
         folder_button = ttk.Button(self, text="Choose folder", padding=[8, 2], command=partial(self.choose_folder, errmsg, folder_entry))
-        folder_button.grid(row=1, column=4, sticky="ew")
+        folder_button.grid(row=1, column=2, sticky="ew")
+
+    def create_new_folder_input(self) -> None:
+        errmsg = StringVar()
+
+        name_label = ttk.Label(self, text="New folder:")
+        name_label.grid(row=0, column=3, sticky="nw", pady=0)
+
+        error_label = ttk.Label(self, foreground="red", textvariable=errmsg)
+        error_label.grid(row=0, column=5, sticky='nw', pady=0)
+
+        checker = self.register(partial(self.is_posible_folder, errmsg=errmsg, error_label=error_label))
+        folder_entry = ttk.Entry(self, validate="all", validatecommand=(checker, "%P"), textvariable=self.new_folder)
+        folder_entry.grid(row=1, column=3, columnspan=2, sticky="ew")
+
+        self.new_folder.trace_add("write", lambda name, index, mode: self.is_posible_folder(err_msg=errmsg, error_label=error_label))
+
+        folder_button = ttk.Button(self, text="Confirm", padding=[8, 2], command=partial(self.is_posible_folder, errmsg=errmsg, error_label=error_label))
+        folder_button.grid(row=1, column=5, sticky="ew")
 
     def is_valid_folder(self, folder_path, error_label, errmsg) -> bool:
         if not folder_path:
@@ -64,6 +84,24 @@ class InputFrame(ttk.Frame):
             error_label.config(foreground="red")
 
         return True
+
+    def is_posible_folder(self, errmsg, error_label) -> bool:
+        if not self.new_folder.get():
+            return False
+
+        if os.path.exists(self.new_folder.get()):
+            return True
+
+        try:
+            os.makedirs(self.new_folder.get())
+            os.rmdir(self.new_folder.get())
+            errmsg.set("Folder can be created")
+            error_label.config(foreground="green")
+            return True
+        except Exception as e:
+            errmsg.set(f"Cannot create folder: {e}")
+            error_label.config(foreground="red")
+        return False
 
     def choose_folder(self, errmsg, entry) -> None:
         entry.delete(0, END)
