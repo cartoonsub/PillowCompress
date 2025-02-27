@@ -61,13 +61,10 @@ class InputFrame(ttk.Frame):
         error_label = ttk.Label(self, foreground="red", textvariable=errmsg)
         error_label.grid(row=0, column=5, sticky='nw', pady=0)
 
-        checker = self.register(partial(self.is_posible_folder, errmsg=errmsg, error_label=error_label))
-        folder_entry = ttk.Entry(self, validate="all", validatecommand=(checker, "%P"), textvariable=self.new_folder)
+        folder_entry = ttk.Entry(self, validate="all")
         folder_entry.grid(row=1, column=3, columnspan=2, sticky="ew")
 
-        self.new_folder.trace_add("write", lambda name, index, mode: self.is_posible_folder(err_msg=errmsg, error_label=error_label))
-
-        folder_button = ttk.Button(self, text="Confirm", padding=[8, 2], command=partial(self.is_posible_folder, errmsg=errmsg, error_label=error_label))
+        folder_button = ttk.Button(self, text="Confirm", padding=[8, 2], command=partial(self.is_posible_folder, errmsg=errmsg, error_label=error_label, folder=folder_entry))
         folder_button.grid(row=1, column=5, sticky="ew")
 
     def is_valid_folder(self, folder_path, error_label, errmsg) -> bool:
@@ -85,17 +82,28 @@ class InputFrame(ttk.Frame):
 
         return True
 
-    def is_posible_folder(self, errmsg, error_label) -> bool:
-        if not self.new_folder.get():
+    def is_posible_folder(self, errmsg, error_label, folder) -> bool:
+        if not self.folder.get():
+            errmsg.set("Before creating a new folder, select the main folder")
+            error_label.config(foreground="red")
             return False
 
-        if os.path.exists(self.new_folder.get()):
+        folder_path = folder.get()
+        if not folder_path:
+            errmsg.set("Please enter a folder path")
+            error_label.config(foreground="red")
+            return False
+
+        if os.path.exists(folder_path):
+            errmsg.set("Folder already exists: " + folder_path)
+            error_label.config(foreground="green")
             return True
 
+        os.chdir(self.folder.get())
         try:
-            os.makedirs(self.new_folder.get())
-            os.rmdir(self.new_folder.get())
-            errmsg.set("Folder can be created")
+            os.makedirs(folder_path)
+            os.rmdir(folder_path)
+            errmsg.set("Folder can be created: " + folder_path)
             error_label.config(foreground="green")
             return True
         except Exception as e:
