@@ -94,17 +94,19 @@ class InputFrame(ttk.Frame):
             error_label.config(foreground="red")
             return False
 
+        os.chdir(self.folder.get())
         if os.path.exists(folder_path):
             errmsg.set("Folder already exists: " + folder_path)
             error_label.config(foreground="green")
+            self.new_folder.set(folder_path)
             return True
 
-        os.chdir(self.folder.get())
         try:
             os.makedirs(folder_path)
             os.rmdir(folder_path)
             errmsg.set("Folder can be created: " + folder_path)
             error_label.config(foreground="green")
+            self.new_folder.set(folder_path)
             return True
         except Exception as e:
             errmsg.set(f"Cannot create folder: {e}")

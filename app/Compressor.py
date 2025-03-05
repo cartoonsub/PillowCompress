@@ -47,7 +47,7 @@ class Compressor:
                 files['image'], self.quality, self.new_folder, self.max_sizes_image
             )
             imgComp.compress_files()
-        
+
         if 'video' in files:
             set_logs('processing', 'Start compressing videos...')
             videoComp = VideoCompressor.VideoCompressor(
@@ -56,6 +56,7 @@ class Compressor:
             videoComp.run()
 
         set_logs('done', 'Compression is done')
+        set_logs('processing', 'Compression is done')
         print('Compression is done')
         return True
 

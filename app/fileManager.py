@@ -24,6 +24,7 @@ class FileManager:
             'video/mp4',
             'video/quicktime',
             'video/mpeg',
+            'video/x-matroska',
         ]
 
     def get_files(self) -> dict:
@@ -94,4 +95,3 @@ class FileManager:
             set_logs('processing', f'Directory {folder} created')
         else:
             print(f'Directory {folder} already exists')
-            set_logs('processing', f'Directory {folder} already exists')
